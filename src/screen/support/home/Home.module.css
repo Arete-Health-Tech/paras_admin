@@ -94,7 +94,7 @@
 }
 
 .date_filters {
-  /* display: flex; */
+  display: flex;
   flex-direction: row !important;
   width: 280px;
   height: 50px;
@@ -107,7 +107,7 @@
   color: #000;
   position: absolute;
   top: 50px;
-  right: 4%;
+  right: 7%;
 }
 
 .home_section2 {

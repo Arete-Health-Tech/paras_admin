@@ -444,7 +444,7 @@ const Home = () => {
                       <Typography
                         variant="body2"
                         sx={{
-                          width: '140px',
+                          // width: '140px',
                           position: 'absolute',
                           top: '50%',
                           left: 12,
@@ -452,7 +452,8 @@ const Home = () => {
                           pointerEvents: 'none',
                           color: '#aaa',
                           fontFamily: 'Outfit, sans-serif',
-                          fontSize: '14px'
+                          fontSize: '12px',
+                          textWrap: 'nowrap'
                         }}
                       >
                         Start Date
@@ -535,13 +536,14 @@ const Home = () => {
                       <Typography
                         variant="body2"
                         sx={{
-                          width: '140px',
+                          // width: '140px',
+                          textWrap: 'nowrap',
                           position: 'absolute',
                           top: '50%',
                           left: 12,
                           transform: 'translateY(-50%)',
                           pointerEvents: 'none',
-                          color: '#aaa', // Adjust the color for the placeholder style
+                          color: '#aaa',
                           fontFamily: 'Outfit, sans-serif',
                           fontSize: '14px'
                         }}
@@ -550,6 +552,7 @@ const Home = () => {
                       </Typography>
                     )}
                     <TextField
+                      placeholder="Start"
                       name="LastDate"
                       fullWidth
                       onChange={handleEndDateChange}
