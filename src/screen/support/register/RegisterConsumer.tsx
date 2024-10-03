@@ -25,7 +25,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SERVER_URL, apiClient } from '../../../api/apiClient';
 import { getConsumerByUhid } from '../../../api/consumer/consumer';
-import { registerConsumerHandler } from '../../../api/consumer/consumerHandler';
+import {
+  getConsumerTicketsHandler,
+  registerConsumerHandler
+} from '../../../api/consumer/consumerHandler';
 import useEventStore from '../../../store/eventStore';
 import { database } from '../../../utils/firebase';
 import { toast, ToastContainer } from 'react-toastify';
@@ -240,6 +243,7 @@ const RegisterConsumer = () => {
       setConsumer({ ...initialConsumerFields });
 
       setSnacks('Patient Registered Successfully!', 'success');
+      console.log(data.uid, 'uid');
       setRegisterUhid(data.uid);
       navigate(`/consumer/${data._id}`);
     }
@@ -347,6 +351,9 @@ const RegisterConsumer = () => {
         updateConsumerState('age', calculateAge(response.data.dob));
         updateConsumerState('gender', response.data.gender);
         setConsumerId(response.data._id);
+        if (response.data._id) {
+          await getConsumerTicketsHandler(response.data._id);
+        }
         setExistingData(true);
       }
     } catch (error) {
@@ -434,7 +441,6 @@ const RegisterConsumer = () => {
             Register patient here for further tasks on the registered patient
           </Stack>
         </Stack>
-
         {/* <TextField>{uhidData}</TextField> */}
         <Stack display={'flex'} flexDirection={'column'} gap={'24px'}>
           <Stack
@@ -619,9 +625,13 @@ const RegisterConsumer = () => {
           </Button>
         )} */}
         </Stack>
+         
       </Box>
       <Box px={2} className={Styles.Next_btn_layout}>
-        <Stack className={Styles.Next_btn} onClick={registerConsumer}>
+        <Stack
+          className={Styles.Next_btn}
+          onClick={existingData ? nextConsumer : registerConsumer}
+        >
           Next
         </Stack>
       </Box>

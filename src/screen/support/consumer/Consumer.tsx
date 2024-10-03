@@ -66,6 +66,7 @@ const Consumer = () => {
   const { consumerHistory, searchResults, registerUhid } = useConsumerStore();
   const { setSnacks } = useEventStore();
   const { id } = useParams();
+  console.log(id, 'id');
   const [consumerData, setConsumerData] = useState<Consumer | null>(null);
   const navigate = useNavigate();
   const UploadComp = ({ id }: { id: string }) => {

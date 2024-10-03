@@ -209,7 +209,7 @@ const Ticket = () => {
     useState(false);
 
   const [page, setPage] = useState<number>(1);
-  const [selectedItem, setSelectedItem] = useState('Mohali');
+  // const [selectedItem, setSelectedItem] = useState('Mohali');
   const visibleRef = useRef<HTMLDivElement | null>(null);
 
   const navigate = useNavigate();
@@ -786,12 +786,12 @@ const Ticket = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (item) => {
-    if (item) {
-      setSelectedItem(item);
-    }
-    setAnchorEl(null);
-  };
+  // const handleClose = (item) => {
+  //   if (item) {
+  //     setSelectedItem(item);
+  //   }
+  //   setAnchorEl(null);
+  // };
 
   //This function call the api to get all the ticket id with their whtsapp message count
   const getAllWhtsappMsgCount = async () => {
