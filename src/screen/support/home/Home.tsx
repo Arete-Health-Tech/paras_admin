@@ -314,6 +314,16 @@ const Home = () => {
     setIsFilterApply(false);
   };
 
+  const [searchValue, setSearchValue] = useState('');
+  const handleSearchUhid = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    console.log('Searching for:', value);
+  };
+  const getTicketByUhid = () => {
+    console.log(searchValue, 'hid');
+  };
+
   return (
     <>
       <Box className={Styles.home_container}>
@@ -350,9 +360,13 @@ const Home = () => {
                     type="text"
                     className={Styles.search_input}
                     placeholder=" Search..."
-                    // onKeyDown={handleSearchKeyPress}
+                    onChange={handleSearchUhid}
+                    value={searchValue}
                   />
-                  <span className={Styles.search_icon}>
+                  <span
+                    className={Styles.search_icon}
+                    onClick={getTicketByUhid}
+                  >
                     {' '}
                     <SearchIcon />
                   </span>

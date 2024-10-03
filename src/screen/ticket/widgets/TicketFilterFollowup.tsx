@@ -179,6 +179,7 @@ const TicketFilter = (props: {
   // const { representative } = useReprentativeStore();
 
   const [isPatnaUser, SetIsPatnaUser] = useState(false);
+
   const [isRanchiUser, SetIsRanchiUser] = useState(false);
   const [isAdminUser, setIsAdminUser] = useState(false);
 

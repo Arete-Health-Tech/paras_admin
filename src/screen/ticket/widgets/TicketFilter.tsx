@@ -53,10 +53,8 @@ export const ticketFilterCount = (
   dateRange: string[],
   statusType: string[],
   filteredLocation: string,
-  isAmritsarUser: boolean,
-  isHoshiarpurUser: boolean,
-  isNawanshahrUser: boolean,
-  isKhannaUser: boolean,
+  isPatnaUser: boolean,
+  isRanchiUser: boolean,
   followUp: Date | null
 ) => {
   const stageListCount = selectedFilters['stageList'].length;
@@ -71,21 +69,9 @@ export const ticketFilterCount = (
   const followUpCount = followUp !== null ? 1 : 0;
 
   let locationCount = 0;
-  if (
-    !isAmritsarUser &&
-    !isHoshiarpurUser &&
-    !isNawanshahrUser &&
-    !isKhannaUser
-  ) {
+  if (!isPatnaUser && !isRanchiUser) {
     locationCount =
-      filteredLocation == 'Amritsar' ||
-      filteredLocation == 'Mohali' ||
-      filteredLocation == 'Hoshiarpur' ||
-      filteredLocation == 'Nawanshahr' ||
-      filteredLocation == 'Hoshiarpur' ||
-      filteredLocation == 'Khanna'
-        ? 1
-        : 0;
+      filteredLocation == 'patna' || filteredLocation == 'ranchi' ? 1 : 0;
   } else {
     locationCount = 0;
     console.log('good');
@@ -190,52 +176,33 @@ const TicketFilter = (props: {
 
   // const { representative } = useReprentativeStore();
 
-  const [isAmritsarUser, SetIsAmritsarUser] = useState(false);
-  const [isHoshiarpurUser, SetIsHoshiarpurUser] = useState(false);
-  const [isNawanshahrUser, SetIsNnawanshahrUser] = useState(false);
-  const [isKhannaUser, SetIsKhannaUser] = useState(false);
+  const [isPatnaUser, SetIsPatnaUser] = useState(false);
+  const [isRanchiUser, SetIsRanchiUser] = useState(false);
   const [isAdminUser, setIsAdminUser] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
         const fetchedRepresentative = await getRepresntativesHandler();
-        const amritsarFound = fetchedRepresentative?.some(
+        const patnaFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66a4caeaab18bee54eea0866'
+            rep.phone === phoneNumber && rep.Unit === '66fa9666589c46100af402c9'
         );
-        const hoshiarpurFound = fetchedRepresentative?.some(
+        const ranchiFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66bf5f702586bb9ea5598451'
-        );
-        const nawanshahrFound = fetchedRepresentative?.some(
-          (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66bf5f5c2586bb9ea5598450'
-        );
-        const khannaFound = fetchedRepresentative?.some(
-          (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66d5535689e33e0601248a79'
+            rep.phone === phoneNumber && rep.Unit === '66f7bdca783f9aaba1099ce4'
         );
 
-        if (amritsarFound) {
-          // console.log("Its AmritSar User.", matchFound);
-          SetIsAmritsarUser(true);
-          setFilteredLocation('Amritsar');
-        } else if (hoshiarpurFound) {
-          SetIsHoshiarpurUser(true);
-          setFilteredLocation('Hoshiarpur');
-        } else if (nawanshahrFound) {
-          SetIsNnawanshahrUser(true);
-          setFilteredLocation('Nawanshahr');
-        } else if (khannaFound) {
-          SetIsKhannaUser(true);
-          setFilteredLocation('Khanna');
+        if (patnaFound) {
+          SetIsPatnaUser(true);
+          setFilteredLocation('patna');
+        } else if (ranchiFound) {
+          SetIsRanchiUser(true);
+          setFilteredLocation('ranchi');
         } else {
           setIsAdminUser(true);
-          SetIsAmritsarUser(false);
-          SetIsHoshiarpurUser(false);
-          SetIsNnawanshahrUser(false);
-          SetIsKhannaUser(false);
+          SetIsPatnaUser(false);
+          SetIsRanchiUser(false);
           setFilteredLocation('');
         }
       } catch (error) {
@@ -465,10 +432,8 @@ const TicketFilter = (props: {
         dateRange,
         statusType,
         filteredLocation,
-        isAmritsarUser,
-        isHoshiarpurUser,
-        isNawanshahrUser,
-        isKhannaUser,
+        isPatnaUser,
+        isRanchiUser,
         followUp
       )
     );
@@ -510,10 +475,8 @@ const TicketFilter = (props: {
         dateRange,
         statusType,
         filteredLocation,
-        isAmritsarUser,
-        isHoshiarpurUser,
-        isNawanshahrUser,
-        isKhannaUser,
+        isPatnaUser,
+        isRanchiUser,
         followUp
       )
     );
@@ -527,14 +490,10 @@ const TicketFilter = (props: {
     setStatusType((prev) => []);
     setDiagnosticsType((prev) => []);
     setDateRange(['', '']);
-    if (isAmritsarUser) {
-      setFilteredLocation('Amritsar');
-    } else if (isHoshiarpurUser) {
-      setFilteredLocation('Hoshiarpur');
-    } else if (isNawanshahrUser) {
-      setFilteredLocation('Nawanshahr');
-    } else if (isKhannaUser) {
-      setFilteredLocation('Khanna');
+    if (isPatnaUser) {
+      setFilteredLocation('patna');
+    } else if (isRanchiUser) {
+      setFilteredLocation('ranchi');
     } else {
       setFilteredLocation('');
     }
