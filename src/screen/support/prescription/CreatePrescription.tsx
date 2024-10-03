@@ -1516,7 +1516,7 @@ const CreatePrescription = () => {
             <Box my={1.8} px={1}>
               <ThemeProvider theme={customTheme(outerTheme)}>
                 <TextField
-                  inputProps={{ inputProps: { min: new Date() } }}
+                  inputProps={{ min: new Date().toISOString().split('T')[0] }}
                   value={prescription.followUp}
                   onChange={(e) =>
                     changePrescriptionValue('followUp', e.target.value)
