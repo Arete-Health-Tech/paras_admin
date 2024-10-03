@@ -87,13 +87,7 @@ const Search = () => {
       </Stack>
       <Box p={1} my={1} marginBottom={'100px'}>
         {searchResults.length > 0 && (
-          <Stack
-            className={Styles.consumer_info}
-            position="sticky"
-            top={'16.1vh'}
-            zIndex={10}
-            bgcolor={'#FFF'}
-          >
+          <Stack className={Styles.consumer_info} bgcolor={'#FFF'}>
             <Stack className={Styles.consumer_info_icon}>
               <img src={InfoIcon} />
             </Stack>

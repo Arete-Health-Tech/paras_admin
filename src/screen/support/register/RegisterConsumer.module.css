@@ -79,7 +79,10 @@
   align-items: center;
   gap: var(--8px, 8px);
   border-radius: var(--4px, 4px);
-  margin-top: 16px;
+  /* margin-top: 16px; */
+  /* top: 5px; */
+  border: 1px solid black;
+  height: 50px;
   margin-left: 82%;
 }
 

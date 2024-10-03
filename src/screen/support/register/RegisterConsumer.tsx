@@ -15,7 +15,9 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  InputAdornment,
+  IconButton
 } from '@mui/material';
 import axios from 'axios';
 import { AnyAaaaRecord } from 'dns';
@@ -421,7 +423,7 @@ const RegisterConsumer = () => {
         flexDirection="column"
         sx={{
           overflowY: 'auto',
-          maxHeight: '100%'
+          maxHeight: 'calc(100vh - 190px)'
         }}
       >
         <Stack className={Styles.consumer_info}>
@@ -455,21 +457,20 @@ const RegisterConsumer = () => {
                   error={validations.uid.value}
                   helperText={validations.uid.message}
                   InputLabelProps={fieldCss}
-                  InputProps={fieldInputCss}
+                  InputProps={{
+                    ...fieldInputCss,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={fetchConsumerDataByUhid}>
+                          <img src={SearchIconActive} alt="search" />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                   // inputProps={{ maxLength: 13, pattern: "\\d{0,12}" }}
                   // disabled={existingBIData ? false : true}
                 />
               </ThemeProvider>
-            </Stack>
-
-            <Stack
-              className={Styles.Search_btn}
-              component={'div'}
-              onClick={fetchConsumerDataByUhid}
-            >
-              <Stack className={Styles.Search_btn_text}>
-                <img src={SearchIconActive} />
-              </Stack>
             </Stack>
           </Stack>
 
