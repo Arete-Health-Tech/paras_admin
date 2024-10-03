@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+* {
+  font-family: Outfit, sans-serif;
+}
+
+.tabs_layout {
+  display: flex;
+  flex-direction: column !important;
+  align-items: center;
+  gap: 2px;
+  flex: 1 0 0;
+}

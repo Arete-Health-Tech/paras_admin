@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+* {
+  font-family: Outfit, sans-serif;
+}
+
+.border {
+  display: flex;
+  height: var(--0px, 0px);
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 100%;
+  height: var(--0px, 1px);
+  background: #d4dbe5;
+}
+
+/* Prescription Upload Btn */
+
+.upload_prsc_btn {
+  display: flex;
+  height: var(--48px, 48px);
+  padding: var(--Spacing-0px, 0px) var(--16px, 16px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--8px, 8px);
+  border-radius: var(--4px, 4px);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+}
+
+.upload_pharmacy_btn {
+  display: flex;
+  height: var(--48px, 34px);
+  width: 62px;
+  padding: var(--Spacing-0px, 0px) var(--16px, 16px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--8px, 8px);
+  border-radius: var(--4px, 16px);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+  cursor: pointer;
+}
+
+/* .upload_diag_btn {
+  display: flex;
+  height: var(--48px, 38px);
+  padding: var(--Spacing-0px, 0px) var(--16px, 16px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--8px, 8px);
+  border-radius: var(--4px, 16px);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+  
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+} */
+
+.upload_diag_btn {
+  display: flex;
+  height: var(--32px, 32px);
+  padding: 8px var(--12px, 12px);
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--16px, 16px);
+  gap: 8px;
+  text-wrap: nowrap;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+.cross {
+  width: var(--24px, 24px);
+  height: var(--24px, 24px);
+  flex-shrink: 0;
+  background-color: var(--Icons-White, #fff);
+  display: flex;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.cross img {
+  display: flex;
+  justify-content: center;
+  margin: 6.5px;
+}
+
+.Upload_btn {
+  display: flex;
+  height: var(--48px, 48px);
+  padding: var(--24px, 24px) 0px;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center;
+  gap: var(--Spacing-4px, 4px);
+  align-self: stretch;
+  border-radius: var(--4px, 4px);
+  background: var(--Background-Greyish, #f6f7f9);
+}
+
+.Upload_btn_tex {
+  text-transform: capitalize;
+  color: var(--Text-Grey, #354869);
+  text-align: right;
+  text-wrap: nowrap;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+/* Success Page */
+
+.success_container {
+  margin-top: 30%;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+.success_icon {
+  width: 120px;
+  height: 120px;
+}
+.success_title {
+  color: var(--Text-Black, #080f1a);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 21px */
+}

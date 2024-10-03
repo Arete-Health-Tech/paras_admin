@@ -8,6 +8,7 @@ export interface iConsumer {
   phone: string;
   uid: string;
   dob: string | number | Date;
+  age: string | number;
   gender: 'M' | 'F' | 'O';
 }
 
@@ -21,6 +22,8 @@ interface iTicket {
 }
 
 export interface iConsumerStore {
+  registerUhid: string;
+  setRegisterUhid: (registerUhid: string) => void;
   searchResults: iConsumer[];
   setSearchResults: (consumers: iConsumer[]) => void;
   consumerHistory: iTicket[];

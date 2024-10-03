@@ -279,7 +279,7 @@ const Ticket = () => {
   }, []);
 
   useEffect(() => {
-    console.log(newFilter, 'newFilter');
+    // console.log(newFilter, 'newFilter');
     const data = async () => {
       setSearchName(UNDEFINED);
       setSearchByName(UNDEFINED);
@@ -615,13 +615,13 @@ const Ticket = () => {
   //     socket.off(socketEventConstants.REFETCH_TICKETS, refetchTickets);
   //   };
   // }, []);
-  console.log(page);
+  // console.log(page);
 
   useEffect(() => {
     clearAllInterval(AllIntervals);
 
     reminders?.forEach((reminderDetail, index) => {
-      console.log(reminderDetail);
+      // console.log(reminderDetail);
       let alarmInterval: any;
 
       alarmInterval = setInterval(() => {
@@ -634,7 +634,7 @@ const Ticket = () => {
         ) {
           (async () => {
             if (!reminderList.includes(reminderDetail._id)) {
-              console.log(reminders);
+              // console.log(reminders);
               const data =
                 reminderDetail.ticketType === 'admission'
                   ? await getticketRescedulerAboveAdmission(
@@ -731,7 +731,7 @@ const Ticket = () => {
 
   useEffect(() => {
     let pageNumber = page;
-    console.log(pageNumber);
+    // console.log(pageNumber);
     clearAllInterval(AllIntervals);
     callRescheduler?.forEach((callRescheduleDetail, index) => {
       let alarmInterval: any;
@@ -907,32 +907,18 @@ const Ticket = () => {
       try {
         const fetchedRepresentative = await getRepresntativesHandler();
 
-        const amritsarFound = fetchedRepresentative?.some(
+        const patnaFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66a4caeaab18bee54eea0866'
+            rep.phone === phoneNumber && rep.Unit === '66fa9666589c46100af402c9'
         );
-        const hoshiarpurFound = fetchedRepresentative?.some(
+        const ranchiFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66bf5f702586bb9ea5598451'
-        );
-        const nawanshahrFound = fetchedRepresentative?.some(
-          (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66bf5f5c2586bb9ea5598450'
-        );
-        const khannaFound = fetchedRepresentative?.some(
-          (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66d5535689e33e0601248a79'
+            rep.phone === phoneNumber && rep.Unit === '66f7bdca783f9aaba1099ce4'
         );
 
-        console.log(nawanshahrFound, 'found--------');
-
-        if (amritsarFound) {
+        if (patnaFound) {
           setIsAdminUser(false);
-        } else if (hoshiarpurFound) {
-          setIsAdminUser(false);
-        } else if (nawanshahrFound) {
-          setIsAdminUser(false);
-        } else if (khannaFound) {
+        } else if (ranchiFound) {
           setIsAdminUser(false);
         } else {
           setIsAdminUser(true);
@@ -1107,51 +1093,21 @@ const Ticket = () => {
                             sx={menuItemStyles}
                             onClick={() => (
                               setVisible(false),
-                              localStorage.setItem('location', 'Mohali'),
+                              localStorage.setItem('location', 'patna'),
                               handleOnClose()
                             )}
                           >
-                            Mohali
+                            Patna
                           </MenuItem>
                           <MenuItem
                             sx={menuItemStyles}
                             onClick={() => (
                               setVisible(false),
-                              localStorage.setItem('location', 'Amritsar'),
+                              localStorage.setItem('location', 'ranchi'),
                               handleOnClose()
                             )}
                           >
-                            Amritsar
-                          </MenuItem>
-                          <MenuItem
-                            sx={menuItemStyles}
-                            onClick={() => (
-                              setVisible(false),
-                              localStorage.setItem('location', 'Hoshiarpur'),
-                              handleOnClose()
-                            )}
-                          >
-                            Hoshiarpur
-                          </MenuItem>
-                          <MenuItem
-                            sx={menuItemStyles}
-                            onClick={() => (
-                              setVisible(false),
-                              localStorage.setItem('location', 'Nawanshahr'),
-                              handleOnClose()
-                            )}
-                          >
-                            Nawanshahr
-                          </MenuItem>
-                          <MenuItem
-                            sx={menuItemStyles}
-                            onClick={() => (
-                              setVisible(false),
-                              localStorage.setItem('location', 'Khanna'),
-                              handleOnClose()
-                            )}
-                          >
-                            Khanna
+                            Ranchi
                           </MenuItem>
                         </Stack>
                       </Stack>

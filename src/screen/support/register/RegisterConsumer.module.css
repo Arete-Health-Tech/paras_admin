@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+* {
+  font-family: Outfit, sans-serif;
+}
+
+.consumer_title {
+  width: 100%;
+  display: flex;
+  flex-direction: row !important;
+  padding: 16px 16px;
+  background-color: #0566ff;
+  gap: 16px;
+}
+
+.back_arrow {
+  display: flex;
+  width: var(--24px, 24px);
+  height: var(--24px, 24px);
+  padding: 2px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.title_Icon {
+  display: flex;
+  width: var(--48px, 48px);
+  height: var(--48px, 48px);
+  border-radius: var(--24px, 24px);
+  background: var(--Background-Bluish, #dae8ff);
+  padding: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.title_Content {
+  color: var(--Background-White, #fff);
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  padding-top: 10px;
+  /* 21.6px */
+}
+
+.consumer_info {
+  display: flex;
+  flex-direction: row !important;
+  padding: 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  border-radius: var(--12px, 12px);
+  background: var(--Background-Bluish, #dae8ff);
+}
+
+.consumer_info_icon {
+  width: var(--24px, 24px);
+  height: var(--24px, 24px);
+  flex-shrink: 0;
+}
+
+.consumer_info_content {
+  color: var(--Primary-Default, #0566ff);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+.Search_btn {
+  display: flex;
+  position: absolute;
+  flex-direction: row !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--8px, 8px);
+  border-radius: var(--4px, 4px);
+  margin-top: 16px;
+  margin-left: 82%;
+}
+
+.Search_btn_text {
+  color: var(--White, #fff);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+}
+
+.Next_btn {
+  display: flex;
+  flex-direction: row !important;
+  display: flex;
+  height: 48px;
+  padding: var(--Spacing-0px, 0px) var(--16px, 16px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--8px, 8px);
+  border-radius: var(--4px, 4px);
+  background: var(--Primary-Default, #0566ff);
+  color: var(--White, #fff);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+}
+.Next_btn_layout {
+  position: absolute;
+  height: 10%;
+  bottom: 0;
+  width: 100%;
+  background: var(--White, #fff);
+  z-index: 99;
+}

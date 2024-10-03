@@ -20,15 +20,20 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { searchConsumerHandler } from '../../../api/consumer/consumerHandler';
 import useConsumerStore from '../../../store/consumerStore';
 import NotAvailable from '../../../assets/images/notAvailable.png';
 import SearchResult from '../../../assets/images/searchResult.png';
+import SearchDefault from './../../../assets/Amico Medical Prescription (1) 1.svg';
+import Styles from './Search.module.css';
+import SearchIcon from '@mui/icons-material/Search';
+import InfoIcon from './../../../assets/Info.svg';
 
 const Search = () => {
   const [search, setSearch] = useState('');
-  const { searchResults } = useConsumerStore();
+  const { searchResults, setRegisterUhid } = useConsumerStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async function () {
@@ -36,130 +41,132 @@ const Search = () => {
     })();
   }, [search]);
 
+  sessionStorage.removeItem('consumerData');
+  // console.log(searchResults,"search");
   return (
     <Box>
-      {/* <BackHeader title="Search Patient" /> */}
-      <Stack
-        spacing={2}
-        borderRadius="0rem 0rem 1rem 1rem"
-        p={1}
-        bgcolor="primary.main"
-        height={'17vh'}
-        mb={2}
-      >
-        <Stack>
-          <Typography color="white" variant="h6">
-            Search Regsitered Patients
-          </Typography>
+      <Stack className={Styles.home_section1}>
+        <Stack className={Styles.home_title}>
+          <Stack className={Styles.title_name}>
+            <Stack className={Styles.title_date}> </Stack>
+            <Stack>Search</Stack>
+          </Stack>
         </Stack>
-        <FormControl fullWidth variant="standard">
-          <OutlinedInput
-            size="small"
-            sx={{ bgcolor: 'white', outline: 'none' }}
-            value={search}
-            placeholder="Search Patient"
-            onChange={(e) => setSearch(e.target.value)}
-            onBlur={(e) => searchConsumerHandler(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                searchConsumerHandler(search);
-              }
-            }}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
+        <Stack className={Styles.home_searchbar}>
+          <Box display={'flex'} flexDirection={'column'}>
+            <Box
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              gap={'10px'}
+            >
+              <Stack width={'100%'} position={'relative'}>
+                <input
+                  type="text"
+                  className={Styles.search_input}
+                  placeholder=" Search..."
+                  onChange={(e) => setSearch(e.target.value)}
+                  onBlur={(e) => searchConsumerHandler(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      searchConsumerHandler(search);
+                    }
+                  }}
+                />
+                <span
+                  className={Styles.search_icon}
                   onClick={() => searchConsumerHandler(search)}
-                  edge="end"
                 >
-                  <SearchOutlined />
-                </IconButton>
-              </InputAdornment>
-            }
-            fullWidth
-          />
-        </FormControl>
+                  {' '}
+                  <SearchIcon />
+                </span>
+              </Stack>
+            </Box>
+          </Box>
+        </Stack>
       </Stack>
-      <Box p={1}>
+      <Box p={1} my={1} marginBottom={'100px'}>
+        {searchResults.length > 0 && (
+          <Stack
+            className={Styles.consumer_info}
+            position="sticky"
+            top={'16.1vh'}
+            zIndex={10}
+            bgcolor={'#FFF'}
+          >
+            <Stack className={Styles.consumer_info_icon}>
+              <img src={InfoIcon} />
+            </Stack>
+            <Stack className={Styles.consumer_info_content}>
+              Register patient here for further tasks on the registered patient
+            </Stack>
+          </Stack>
+        )}
+
         {search.length > 0 ? (
           searchResults.length > 0 ? (
             searchResults.map((item) => {
               return (
-                <Paper
-                  sx={{ my: 1, p: 1, bgcolor: 'lightgray' }}
-                  key={item._id}
-                >
-                  <Link to={`/consumer/${item._id}`}>
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        fontWeight={500}
-                        color="text.secondary"
-                      >
-                        UHID {item.uid}
-                      </Typography>
-
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>
-                          {item.firstName[0].toLocaleUpperCase()}
-                          {item.lastName &&
-                            item.lastName[0].toLocaleUpperCase()}
-                        </Avatar>
-                        <Stack>
-                          <Typography
-                            fontSize="1.1rem"
-                            textTransform="capitalize"
-                            variant="body1"
-                            fontWeight={500}
-                          >
-                            {item.firstName +
-                              ' ' +
-                              (item.lastName ? item.lastName : '')}
-                          </Typography>
-                          <Stack direction="row" spacing={1}>
-                            <Typography color="text.secondary">
-                              {item.gender === 'M' ? (
-                                <MaleOutlined />
-                              ) : item.gender === 'F' ? (
-                                <FemaleOutlined />
-                              ) : item.gender === 'O' ? (
-                                <TransgenderOutlined />
-                              ) : (
-                                'Gender Not Specified'
-                              )}
-                            </Typography>
-                            {item.dob && (
-                              <Typography variant="body2">
-                                {dayjs(item.dob).toNow(true)}
-                              </Typography>
-                            )}
-                          </Stack>
+                <>
+                  <Box
+                    my={2.2}
+                    className={Styles.search_consumer}
+                    key={item._id}
+                    onClick={() => {
+                      navigate(`/consumer/${item._id}`);
+                      setRegisterUhid(item.uid);
+                    }}
+                  >
+                    <Stack className={Styles.search_consumer_up}>
+                      <Stack className={Styles.search_consumer_up1}>
+                        <Stack className={Styles.search_consumer_name}>
+                          {item.firstName} {item.lastName && item.lastName}
+                        </Stack>
+                        <Stack className={Styles.search_consumer_gen_age}>
+                          {item.gender && (
+                            <Stack className={Styles.search_consumer_gen}>
+                              {item.gender}
+                            </Stack>
+                          )}
+                          {/* {dayjs(item.dob).toNow(true)} */}
+                          {item.age && (
+                            <Stack className={Styles.search_consumer_age}>
+                              {item.age}
+                            </Stack>
+                          )}
                         </Stack>
                       </Stack>
-
-                      <Typography variant="caption">{item.email}</Typography>
-                    </Box>
-                  </Link>
-                </Paper>
+                      <Stack className={Styles.search_consumer_up2}>
+                        #{item.uid}
+                      </Stack>
+                    </Stack>
+                    {item.phone && (
+                      <Stack className={Styles.search_consumer_bot}>
+                        Ph: +{item.phone}
+                      </Stack>
+                    )}
+                  </Box>
+                </>
               );
             })
           ) : (
-            <Stack display="flex" justifyContent="center" alignItems="center">
-              <img
-                src={NotAvailable}
-                alt="No Department Selected"
-                width="50%"
-              />
-              <Typography variant="body2" fontWeight={500} color="GrayText">
-                No Results Found
-              </Typography>
+            <Stack className={Styles.defaultScreen_container}>
+              <Stack className={Styles.imG}>
+                <img src={SearchDefault} alt="No Department Selected" />
+              </Stack>
+              <Stack className={Styles.defaultScreen_text}>
+                No Result Found
+              </Stack>
             </Stack>
           )
         ) : (
-          <Stack display="flex" justifyContent="center" alignItems="center">
-            <img src={SearchResult} alt="No Department Selected" width="50%" />
-            <Typography variant="body2" fontWeight={500} color="GrayText">
-              Search Patients
-            </Typography>
+          <Stack className={Styles.defaultScreen_container}>
+            <Stack className={Styles.imG}>
+              <img src={SearchDefault} alt="No Department Selected" />
+            </Stack>
+            <Stack className={Styles.defaultScreen_text}>
+              Search Patients by entering UHID, Phone Number or Name
+            </Stack>
           </Stack>
         )}
       </Box>

@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Modal,
   Tab,
   Tabs,
   Typography
@@ -11,12 +12,35 @@ import {
 import { Stack } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getConsumerTicketsHandler } from '../../../api/consumer/consumerHandler';
+import {
+  getConsumerTicketsHandler,
+  searchConsumerHandler
+} from '../../../api/consumer/consumerHandler';
 import { uploadAndSendEstimateHandler } from '../../../api/estimate/estimateHandler';
 import useConsumerStore from '../../../store/consumerStore';
 import useEventStore from '../../../store/eventStore';
 import CreatePrescription from '../prescription/CreatePrescription';
 import BackHeader from '../widgets/BackHeader';
+import Styles from './Consumer.module.css';
+import { apiClient } from '../../../api/apiClient';
+import UserAddIcon from '../../../assets/user-add.svg';
+import BackArrow from '../../../assets/arrow-leftBlue.svg';
+import { useNavigate } from 'react-router-dom';
+import useServiceStore from '../../../store/serviceStore';
+import ShowPrescription from '../../ticket/widgets/ShowPrescriptionModal';
+import { iTicket } from '../../../types/store/ticket';
+import HistoryTicket from './HistoryTicket';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90%',
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4
+};
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -24,12 +48,26 @@ interface TabPanelProps {
   value: number;
 }
 
+interface Consumer {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  phone: string;
+  age: string;
+  dob: string;
+  gender: string;
+  uid: string;
+}
+
 const Consumer = () => {
   const [value, setValue] = useState(0);
-  const { consumerHistory } = useConsumerStore();
+
+  const { consumerHistory, searchResults, registerUhid } = useConsumerStore();
   const { setSnacks } = useEventStore();
   const { id } = useParams();
-
+  const [consumerData, setConsumerData] = useState<Consumer | null>(null);
+  const navigate = useNavigate();
   const UploadComp = ({ id }: { id: string }) => {
     const [file, setFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
@@ -41,6 +79,9 @@ const Consumer = () => {
       setFile(null);
       setLoading(false);
     };
+
+    // console.log(
+    //   consumerHistory, "previous data");
     return (
       <>
         {file ? (
@@ -90,94 +131,135 @@ const Consumer = () => {
     (async function () {
       if (id) {
         await getConsumerTicketsHandler(id);
+        await searchConsumerHandler(id);
       }
     })();
+
+    const getConsumer = async () => {
+      const response = await apiClient.get('/consumer/findConsumer?', {
+        params: { search: registerUhid }
+      });
+      // console.log(response,"response");
+      setConsumerData(response.data);
+      if (response.data) {
+        sessionStorage.setItem('consumerData', JSON.stringify(response.data));
+      }
+    };
+    const fetchData = async () => {
+      const storedData = getStoredConsumer();
+      if (storedData) {
+        // console.log('Using stored data:', storedData);
+        setConsumerData(storedData);
+      } else {
+        await getConsumer();
+      }
+    };
+
+    fetchData();
   }, []);
+
+  const getStoredConsumer = () => {
+    const storedData = sessionStorage.getItem('consumerData');
+    return storedData ? JSON.parse(storedData) : null;
+  };
+
+  const downloadImage = (url, filename) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+  };
+
+  const [open, setOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleOpen = (image) => {
+    setSelectedImage(image);
+    setOpen(true);
+  };
+
+  const handleClose = () => setOpen(false);
+
   return (
     <Box>
-      <BackHeader title="Patient" />
-      <Stack position="sticky" top={55} bgcolor="white" zIndex={10}>
+      {/* <BackHeader title="Patient" /> */}
+      <Stack className={Styles.consumer_title}>
+        <Stack
+          className={Styles.back_arrow}
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          <img src={BackArrow} alt="back" />
+        </Stack>
+        <Stack display={'flex'} flexDirection={'column'} gap={'4px'}>
+          <Stack className={Styles.title_up}>
+            {consumerData && (
+              <Stack className={Styles.title_name}>
+                {consumerData.firstName}{' '}
+                {consumerData.lastName && consumerData.lastName}
+              </Stack>
+            )}
+            <Stack display={'flex'} flexDirection={'row'} gap={'4px'}>
+              {consumerData && consumerData.gender && (
+                <Stack className={Styles.title_gen}>
+                  {consumerData.gender}
+                </Stack>
+              )}
+              {consumerData && consumerData.age && (
+                <Stack className={Styles.title_Age}>{consumerData.age}</Stack>
+              )}
+            </Stack>
+          </Stack>
+          <Stack className={Styles.title_bot}>
+            {consumerData && (
+              <Stack className={Styles.title_uhid}>#{consumerData.uid}</Stack>
+            )}
+          </Stack>
+        </Stack>
+      </Stack>
+      <Stack position="sticky" top={76} bgcolor="white" zIndex={10}>
         <Tabs
           variant="fullWidth"
           value={value}
           onChange={(_, newValue: number) => setValue(newValue)}
+          sx={{
+            '& .MuiTabs-indicator': {
+              display: 'none'
+            },
+            '.Mui-selected': {
+              fontFamily: 'Outfit,san-serif',
+              color: '#080F1A !important',
+              fontSize: '14px',
+              borderBottom: '2px solid #0566FF'
+            }
+          }}
         >
-          <Tab label="Prescription" />
-          <Tab label="History" />
+          <Tab
+            label="Prescription"
+            sx={{
+              fontSize: '14px',
+              fontFamily: 'Outfit,san-serif',
+              textTransform: 'capitalize'
+            }}
+          />
+          <Tab
+            label={`History (${
+              consumerHistory.length > 0 ? consumerHistory.length : '0'
+            })`}
+            sx={{
+              fontSize: '14px',
+              fontFamily: 'Outfit,san-serif',
+              textTransform: 'capitalize'
+            }}
+          />
         </Tabs>
       </Stack>
       <Box>
         <TabPanel value={value} index={1}>
-          {consumerHistory.map((history) => {
-            return (
-              <Card
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  my: 1,
-                  backgroundColor: 'primary.light'
-                }}
-              >
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Typography
-                      textTransform="capitalize"
-                      component="div"
-                      variant="h6"
-                    >
-                      {history.prescription.admission === null
-                        ? 'No Admission '
-                        : history.prescription.admission}
-                    </Typography>
-                    <Typography
-                      variant="subtitle1"
-                      color="text.secondary"
-                      component="div"
-                    >
-                      {history.prescription.followUp &&
-                        new Date(history.prescription.followUp).toDateString()}
-                    </Typography>
-                    {history.prescription !== null && (
-                      <Typography
-                        variant="subtitle2"
-                        color="text.secondary"
-                        component="div"
-                      >
-                        {history.prescription.service?.name}
-                      </Typography>
-                    )}
-                    {/* <Typography textTransform="capitalize">
-                      {history.prescription.condition}
-                    </Typography>
-                    <Typography textTransform="capitalize">
-                      {history.prescription.symptoms}
-                    </Typography> */}
-                    {history.prescription.medicines?.map((item: any) => (
-                      <Typography textTransform="capitalize">{item}</Typography>
-                    ))}
-                    {history.prescription.admission !== null && (
-                      <Stack spacing={1} alignItems="flex-start">
-                        <Link
-                          to={`/consumer/${history.consumer}/estimate/${history.prescription._id}`}
-                        >
-                          <Button size="small" variant="contained">
-                          Create Estimation
-                          </Button>
-                        </Link>
-                        <UploadComp id={history._id} />
-                      </Stack>
-                    )}
-                  </CardContent>
-                </Box>
-                <CardMedia
-                  component="img"
-                  sx={{ width: 151 }}
-                  image={history.prescription.image}
-                  alt="prescription image"
-                />
-              </Card>
-            );
-          })}
+          <Stack marginBottom={'150px'} margin={'0 6px'}>
+            <HistoryTicket consumerData={consumerData} />
+          </Stack>
         </TabPanel>
         <TabPanel value={value} index={0}>
           <CreatePrescription />
