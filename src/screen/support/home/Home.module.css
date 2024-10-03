@@ -96,7 +96,7 @@
 .date_filters {
   /* display: flex; */
   flex-direction: row !important;
-  width: 300px;
+  width: 280px;
   height: 50px;
   align-items: center;
   border-radius: var(--Spacing-16px, 16px);

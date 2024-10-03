@@ -404,10 +404,11 @@ const Home = () => {
                   direction="row"
                   className={Styles.date_filters}
                 >
-                  <TextField
+                  {/* <TextField
+                    name="StartDate"
                     fullWidth
                     onChange={handleStartDateChange}
-                    value={dateRange[0]}
+                    value={dateRange[0] || ''}
                     size="small"
                     type="date"
                     InputLabelProps={{
@@ -419,7 +420,8 @@ const Home = () => {
                       style: {
                         fontFamily: 'Outfit,san-serif',
                         fontSize: '14px'
-                      }
+                      },
+                      placeholder: dateRange[0] ? '' : 'Start Date'
                     }}
                     InputProps={{
                       style: {
@@ -436,9 +438,64 @@ const Home = () => {
                         }
                       }
                     }}
-                  />
+                  /> */}
+                  <Box sx={{ position: 'relative' }}>
+                    {!dateRange[0] && (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: 12,
+                          transform: 'translateY(-50%)',
+                          pointerEvents: 'none',
+                          color: '#aaa',
+                          fontFamily: 'Outfit, sans-serif',
+                          fontSize: '14px'
+                        }}
+                      >
+                        Start Date
+                      </Typography>
+                    )}
+                    <TextField
+                      name="StartDate"
+                      fullWidth
+                      placeholder=""
+                      onChange={handleStartDateChange}
+                      value={dateRange[0] || ''}
+                      size="small"
+                      type="date"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { fontFamily: 'Outfit,san-serif' }
+                      }}
+                      inputProps={{
+                        max: new Date().toISOString().split('T')[0],
+                        style: {
+                          fontFamily: 'Outfit,san-serif',
+                          fontSize: '14px'
+                        }
+                      }}
+                      InputProps={{
+                        style: {
+                          border: 'none',
+                          fontFamily: 'Outfit, sans-serif',
+                          fontSize: '14px'
+                        },
+                        disableUnderline: true
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            border: 'none'
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
 
-                  <TextField
+                  {/* <TextField
+                    name="LastDate"
                     fullWidth
                     onChange={handleEndDateChange}
                     value={dateRange[1]}
@@ -471,7 +528,60 @@ const Home = () => {
                         }
                       }
                     }}
-                  />
+                  /> */}
+                  <Box sx={{ position: 'relative' }}>
+                    {!dateRange[1] && (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: 12,
+                          transform: 'translateY(-50%)',
+                          pointerEvents: 'none',
+                          color: '#aaa', // Adjust the color for the placeholder style
+                          fontFamily: 'Outfit, sans-serif',
+                          fontSize: '14px'
+                        }}
+                      >
+                        Last Date
+                      </Typography>
+                    )}
+                    <TextField
+                      name="LastDate"
+                      fullWidth
+                      onChange={handleEndDateChange}
+                      value={dateRange[1] || ''}
+                      type="date"
+                      size="small"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { fontFamily: 'Outfit, sans-serif' }
+                      }}
+                      inputProps={{
+                        max: new Date().toISOString().split('T')[0],
+                        style: {
+                          fontFamily: 'Outfit, sans-serif',
+                          fontSize: '14px'
+                        }
+                      }}
+                      InputProps={{
+                        style: {
+                          border: 'none',
+                          fontFamily: 'Outfit, sans-serif',
+                          fontSize: '14px'
+                        },
+                        disableUnderline: true
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            border: 'none'
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
                 </Stack>
               </Box>
             </Box>
