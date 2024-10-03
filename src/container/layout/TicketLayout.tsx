@@ -1006,11 +1006,11 @@ const Ticket = () => {
                       paddingLeft="1rem"
                       paddingRight={isAdminUser ? '0rem' : '0.8rem'}
                     >
-                      <span>
+                      <Stack sx={{ textTransform: 'capitalize' }}>
                         {localStorage.getItem('location') == ''
                           ? 'All'
                           : localStorage.getItem('location')}
-                      </span>
+                      </Stack>
                       {isAdminUser ? (
                         <span>
                           <img src={DropDownArrow} alt="" />
