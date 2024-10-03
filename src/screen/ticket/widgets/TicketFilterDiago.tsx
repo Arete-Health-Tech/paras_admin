@@ -919,6 +919,7 @@ const TicketFilter = (props: {
               <ToggleButtonGroup
                 color="primary"
                 value={filteredLocation}
+                // onChange={() => setFilteredLocation('Amritsar')}
                 onChange={handleLocation}
               >
                 <ToggleButton

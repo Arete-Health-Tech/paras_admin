@@ -904,59 +904,23 @@ const TicketFilter = (props: {
                 onChange={handleLocation}
               >
                 <ToggleButton
-                  value="Mohali"
+                  value="patna"
                   sx={{
                     fontFamily: 'Outfit,sans-serif',
                     fontSize: '12px'
                   }}
                 >
-                  Mohali
+                  Patna
                 </ToggleButton>
 
                 <ToggleButton
-                  value="Amritsar"
+                  value="ranchi"
                   sx={{
                     fontFamily: 'Outfit,sans-serif',
                     fontSize: '12px'
                   }}
                 >
-                  Amritsar
-                </ToggleButton>
-
-                <ToggleButton
-                  value="Hoshiarpur"
-                  sx={{
-                    fontFamily: 'Outfit,sans-serif',
-                    fontSize: '12px'
-                  }}
-                >
-                  Hoshiarpur
-                </ToggleButton>
-              </ToggleButtonGroup>
-              <ToggleButtonGroup
-                color="primary"
-                value={filteredLocation}
-                // onChange={() => setFilteredLocation('Amritsar')}
-                onChange={handleLocation}
-                sx={{ marginTop: '5px' }}
-              >
-                <ToggleButton
-                  value="Nawanshahr"
-                  sx={{
-                    fontFamily: 'Outfit,sans-serif',
-                    fontSize: '12px'
-                  }}
-                >
-                  Nawanshahr
-                </ToggleButton>
-                <ToggleButton
-                  value="Khanna"
-                  sx={{
-                    fontFamily: 'Outfit,sans-serif',
-                    fontSize: '12px'
-                  }}
-                >
-                  Khanna
+                  Ranchi
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>
