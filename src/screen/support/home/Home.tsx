@@ -444,6 +444,7 @@ const Home = () => {
                       <Typography
                         variant="body2"
                         sx={{
+                          width: '140px',
                           position: 'absolute',
                           top: '50%',
                           left: 12,
@@ -534,6 +535,7 @@ const Home = () => {
                       <Typography
                         variant="body2"
                         sx={{
+                          width: '140px',
                           position: 'absolute',
                           top: '50%',
                           left: 12,
