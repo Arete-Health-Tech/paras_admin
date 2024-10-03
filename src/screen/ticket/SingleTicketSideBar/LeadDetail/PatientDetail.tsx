@@ -26,7 +26,6 @@ import { updateConusmerData } from '../../../../api/ticket/ticket';
 import { getTicketHandler } from '../../../../api/ticket/ticketHandler';
 import { apiClient } from '../../../../api/apiClient';
 import dayjs from 'dayjs';
-import { UNDEFINED } from '../../../../constantUtils/constant';
 
 interface patientData {
   uhid: string;
@@ -92,8 +91,6 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
   const {
     tickets,
     filterTickets,
-    filterTicketsDiago,
-    filterTicketsFollowUp,
     searchByName,
     pageNumber,
     viewEstimates,
@@ -122,15 +119,6 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
 
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
-
-  const newFilter =
-    localStorage.getItem('ticketType') === 'Admission'
-      ? filterTickets
-      : localStorage.getItem('ticketType') === 'Diagnostics'
-      ? filterTicketsDiago
-      : localStorage.getItem('ticketType') === 'Follow-Up'
-      ? filterTicketsFollowUp
-      : filterTickets;
 
   useEffect(() => {
     const fetchEstimateData = async () => {
@@ -307,8 +295,7 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
       }
     };
     await updateConusmerData(updatedData, ticketID);
-    // window.location.reload()
-    await getTicketHandler(UNDEFINED, 1, 'false', newFilter);
+    await getTicketHandler(searchByName, pageNumber, 'false', filterTickets);
     setIsEditing(false);
   };
 
@@ -749,8 +736,8 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
 
               <Stack>
                 <ShowPrescription
-                  image={currentTicket?.prescription[0]?.image}
-                  image1={currentTicket?.prescription[0]?.image1}
+                  image={currentTicket?.prescription[0]?.image?.split('?')[0]}
+                  image1={currentTicket?.prescription[0]?.image1?.split('?')[0]}
                 />
               </Stack>
             </>

@@ -260,8 +260,6 @@ const Ticket = () => {
   const fetchTicketsOnEmpthySearch = async () => {
     setSearchName(UNDEFINED);
     setSearchByName(UNDEFINED);
-    // setTicketCount(ticketCache["count"]);
-    // setTickets(ticketCache[1]);
     setPage(1);
     setPageNumber(1);
     await getTicketHandler(UNDEFINED, 1, 'false', newFilter);
@@ -279,7 +277,7 @@ const Ticket = () => {
   }, []);
 
   useEffect(() => {
-    // console.log(newFilter, 'newFilter');
+    console.log(newFilter, 'newFilter');
     const data = async () => {
       setSearchName(UNDEFINED);
       setSearchByName(UNDEFINED);
@@ -291,7 +289,7 @@ const Ticket = () => {
       await getTicketHandler(UNDEFINED, 1, 'false', newFilter);
     };
     data();
-  }, [localStorage.getItem('location'), localStorage.getItem('ticketType')]);
+  }, [localStorage.getItem('location')]);
 
   // const handleSeachName = (
   //   e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -615,13 +613,13 @@ const Ticket = () => {
   //     socket.off(socketEventConstants.REFETCH_TICKETS, refetchTickets);
   //   };
   // }, []);
-  // console.log(page);
+  console.log(page);
 
   useEffect(() => {
     clearAllInterval(AllIntervals);
 
     reminders?.forEach((reminderDetail, index) => {
-      // console.log(reminderDetail);
+      console.log(reminderDetail);
       let alarmInterval: any;
 
       alarmInterval = setInterval(() => {
@@ -630,70 +628,16 @@ const Ticket = () => {
           reminderDetail &&
           reminderDetail.date <= currentTime.getTime() &&
           reminderDetail.date + 11000 > currentTime.getTime()
-          // isAlamredReminderExist(reminderDetail)
         ) {
           (async () => {
             if (!reminderList.includes(reminderDetail._id)) {
-              // console.log(reminders);
+              console.log(reminders);
               const data =
                 reminderDetail.ticketType === 'admission'
                   ? await getticketRescedulerAboveAdmission(
                       reminderDetail?.ticket
                     )
                   : await getticketRescedulerAbove(reminderDetail?.ticket);
-              // await getTicketHandler(
-              //   searchByName,
-              //   pageNumber,
-              //   'false',
-              //   newFilter
-              // );
-
-              // const newData = await getTicketForAdmisions(
-              //   UNDEFINED,
-              //   1,
-              //   'false',
-              //   filterTickets,
-              //   reminderDetail?.ticket,
-              //   true,
-              //   phoneNumber
-              // );
-              // let pageNumber = page;
-              // setTickets(data.tickets)
-              // setTicketCount(data.count)
-              // const tiketIndex = ticketCache[1].findIndex((currentData) => {
-              //   console.log(
-              //     'id check:',
-              //     currentData?._id === reminderDetail.ticket
-              //   );
-              //   return currentData?._id === reminderDetail?.ticket;
-              // });
-              // if(tiketIndex > -1){
-              //   let cacheList =  ticketCache[1];
-              //   let removedTicket = cacheList.splice(tiketIndex,1)
-              //   setTicketCache ({...ticketCache,1:[...removedTicket,...cacheList]})
-              // }else{
-              // setTicketCache({
-              //   ...ticketCache,
-              //   1: [data?.tickets[0], ...ticketCache[1]]
-              // });
-              // }
-
-              // if (tiketIndex > -1) {
-              //   let cacheList = ticketCache[1];
-              //   let removedTicket = cacheList.splice(tiketIndex, 1);
-              //   setTicketCache({
-              //     ...ticketCache,
-              //     1: [...removedTicket, ...cacheList]
-              //   });
-              //   setTickets([...removedTicket, ...cacheList]);
-              // } else {
-
-              //   setTickets([data?.tickets[0], ...ticketCache[1]]);
-              //   setTicketCache({
-              //     ...ticketCache,
-              //     1: [data?.tickets[0], ...ticketCache[1]]
-              //   });
-              // }
               if (reminderDetail.ticketType === 'admission') {
                 setTaskTypeForReminder('Admission');
               }
@@ -730,8 +674,6 @@ const Ticket = () => {
   }, [showReminderModal]);
 
   useEffect(() => {
-    let pageNumber = page;
-    // console.log(pageNumber);
     clearAllInterval(AllIntervals);
     callRescheduler?.forEach((callRescheduleDetail, index) => {
       let alarmInterval: any;
@@ -739,12 +681,13 @@ const Ticket = () => {
       alarmInterval = setInterval(() => {
         const currentTime = new Date();
         if (
-          callReschedulerList &&
+          callRescheduleDetail &&
           callRescheduleDetail.date <= currentTime.getTime() &&
           callRescheduleDetail.date + 11000 > currentTime.getTime()
           // isAlamredReminderExist(reminderDetail)
         ) {
           (async () => {
+            console.log('inside the condition');
             if (!callReschedulerList.includes(callRescheduleDetail?._id)) {
               const data =
                 callRescheduleDetail.ticketType === 'admission'
@@ -907,18 +850,32 @@ const Ticket = () => {
       try {
         const fetchedRepresentative = await getRepresntativesHandler();
 
-        const patnaFound = fetchedRepresentative?.some(
+        const amritsarFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66fa9666589c46100af402c9'
+            rep.phone === phoneNumber && rep.Unit === '66a4caeaab18bee54eea0866'
         );
-        const ranchiFound = fetchedRepresentative?.some(
+        const hoshiarpurFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66f7bdca783f9aaba1099ce4'
+            rep.phone === phoneNumber && rep.Unit === '66bf5f702586bb9ea5598451'
+        );
+        const nawanshahrFound = fetchedRepresentative?.some(
+          (rep) =>
+            rep.phone === phoneNumber && rep.Unit === '66bf5f5c2586bb9ea5598450'
+        );
+        const khannaFound = fetchedRepresentative?.some(
+          (rep) =>
+            rep.phone === phoneNumber && rep.Unit === '66d5535689e33e0601248a79'
         );
 
-        if (patnaFound) {
+        console.log(nawanshahrFound, 'found--------');
+
+        if (amritsarFound) {
           setIsAdminUser(false);
-        } else if (ranchiFound) {
+        } else if (hoshiarpurFound) {
+          setIsAdminUser(false);
+        } else if (nawanshahrFound) {
+          setIsAdminUser(false);
+        } else if (khannaFound) {
           setIsAdminUser(false);
         } else {
           setIsAdminUser(true);
@@ -1093,21 +1050,51 @@ const Ticket = () => {
                             sx={menuItemStyles}
                             onClick={() => (
                               setVisible(false),
-                              localStorage.setItem('location', 'patna'),
+                              localStorage.setItem('location', 'Mohali'),
                               handleOnClose()
                             )}
                           >
-                            Patna
+                            Mohali
                           </MenuItem>
                           <MenuItem
                             sx={menuItemStyles}
                             onClick={() => (
                               setVisible(false),
-                              localStorage.setItem('location', 'ranchi'),
+                              localStorage.setItem('location', 'Amritsar'),
                               handleOnClose()
                             )}
                           >
-                            Ranchi
+                            Amritsar
+                          </MenuItem>
+                          <MenuItem
+                            sx={menuItemStyles}
+                            onClick={() => (
+                              setVisible(false),
+                              localStorage.setItem('location', 'Hoshiarpur'),
+                              handleOnClose()
+                            )}
+                          >
+                            Hoshiarpur
+                          </MenuItem>
+                          <MenuItem
+                            sx={menuItemStyles}
+                            onClick={() => (
+                              setVisible(false),
+                              localStorage.setItem('location', 'Nawanshahr'),
+                              handleOnClose()
+                            )}
+                          >
+                            Nawanshahr
+                          </MenuItem>
+                          <MenuItem
+                            sx={menuItemStyles}
+                            onClick={() => (
+                              setVisible(false),
+                              localStorage.setItem('location', 'Khanna'),
+                              handleOnClose()
+                            )}
+                          >
+                            Khanna
                           </MenuItem>
                         </Stack>
                       </Stack>

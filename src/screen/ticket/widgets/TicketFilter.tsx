@@ -53,8 +53,10 @@ export const ticketFilterCount = (
   dateRange: string[],
   statusType: string[],
   filteredLocation: string,
-  isPatnaUser: boolean,
-  isRanchiUser: boolean,
+  isAmritsarUser: boolean,
+  isHoshiarpurUser: boolean,
+  isNawanshahrUser: boolean,
+  isKhannaUser: boolean,
   followUp: Date | null
 ) => {
   const stageListCount = selectedFilters['stageList'].length;
@@ -69,9 +71,21 @@ export const ticketFilterCount = (
   const followUpCount = followUp !== null ? 1 : 0;
 
   let locationCount = 0;
-  if (!isPatnaUser && !isRanchiUser) {
+  if (
+    !isAmritsarUser &&
+    !isHoshiarpurUser &&
+    !isNawanshahrUser &&
+    !isKhannaUser
+  ) {
     locationCount =
-      filteredLocation == 'patna' || filteredLocation == 'ranchi' ? 1 : 0;
+      filteredLocation == 'Amritsar' ||
+      filteredLocation == 'Mohali' ||
+      filteredLocation == 'Hoshiarpur' ||
+      filteredLocation == 'Nawanshahr' ||
+      filteredLocation == 'Hoshiarpur' ||
+      filteredLocation == 'Khanna'
+        ? 1
+        : 0;
   } else {
     locationCount = 0;
     console.log('good');
@@ -174,33 +188,54 @@ const TicketFilter = (props: {
   const { user } = useUserStore.getState();
   const phoneNumber = user?.phone;
 
-  const [isPatnaUser, SetIsPatnaUser] = useState(false);
-  const [isRanchiUser, SetIsRanchiUser] = useState(false);
+  // const { representative } = useReprentativeStore();
+
+  const [isAmritsarUser, SetIsAmritsarUser] = useState(false);
+  const [isHoshiarpurUser, SetIsHoshiarpurUser] = useState(false);
+  const [isNawanshahrUser, SetIsNnawanshahrUser] = useState(false);
+  const [isKhannaUser, SetIsKhannaUser] = useState(false);
   const [isAdminUser, setIsAdminUser] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
         const fetchedRepresentative = await getRepresntativesHandler();
-        const patnaFound = fetchedRepresentative?.some(
+        const amritsarFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66fa9666589c46100af402c9'
+            rep.phone === phoneNumber && rep.Unit === '66a4caeaab18bee54eea0866'
         );
-        const ranchiFound = fetchedRepresentative?.some(
+        const hoshiarpurFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phoneNumber && rep.Unit === '66f7bdca783f9aaba1099ce4'
+            rep.phone === phoneNumber && rep.Unit === '66bf5f702586bb9ea5598451'
+        );
+        const nawanshahrFound = fetchedRepresentative?.some(
+          (rep) =>
+            rep.phone === phoneNumber && rep.Unit === '66bf5f5c2586bb9ea5598450'
+        );
+        const khannaFound = fetchedRepresentative?.some(
+          (rep) =>
+            rep.phone === phoneNumber && rep.Unit === '66d5535689e33e0601248a79'
         );
 
-        if (patnaFound) {
-          SetIsPatnaUser(true);
-          setFilteredLocation('patna');
-        } else if (ranchiFound) {
-          SetIsRanchiUser(true);
-          setFilteredLocation('ranchi');
+        if (amritsarFound) {
+          // console.log("Its AmritSar User.", matchFound);
+          SetIsAmritsarUser(true);
+          setFilteredLocation('Amritsar');
+        } else if (hoshiarpurFound) {
+          SetIsHoshiarpurUser(true);
+          setFilteredLocation('Hoshiarpur');
+        } else if (nawanshahrFound) {
+          SetIsNnawanshahrUser(true);
+          setFilteredLocation('Nawanshahr');
+        } else if (khannaFound) {
+          SetIsKhannaUser(true);
+          setFilteredLocation('Khanna');
         } else {
           setIsAdminUser(true);
-          SetIsPatnaUser(false);
-          SetIsRanchiUser(false);
+          SetIsAmritsarUser(false);
+          SetIsHoshiarpurUser(false);
+          SetIsNnawanshahrUser(false);
+          SetIsKhannaUser(false);
           setFilteredLocation('');
         }
       } catch (error) {
@@ -327,7 +362,7 @@ const TicketFilter = (props: {
       });
     }
   };
-  // console.log({ followUp });
+  console.log({ followUp });
 
   // const handleToggleChange = (event, newValue) => {
   //   setSelectedValue(newValue);
@@ -430,8 +465,10 @@ const TicketFilter = (props: {
         dateRange,
         statusType,
         filteredLocation,
-        isPatnaUser,
-        isRanchiUser,
+        isAmritsarUser,
+        isHoshiarpurUser,
+        isNawanshahrUser,
+        isKhannaUser,
         followUp
       )
     );
@@ -473,8 +510,10 @@ const TicketFilter = (props: {
         dateRange,
         statusType,
         filteredLocation,
-        isPatnaUser,
-        isRanchiUser,
+        isAmritsarUser,
+        isHoshiarpurUser,
+        isNawanshahrUser,
+        isKhannaUser,
         followUp
       )
     );
@@ -488,22 +527,22 @@ const TicketFilter = (props: {
     setStatusType((prev) => []);
     setDiagnosticsType((prev) => []);
     setDateRange(['', '']);
-    if (isPatnaUser) {
-      setFilteredLocation('patna');
-    } else if (isRanchiUser) {
-      setFilteredLocation('ranchi');
+    if (isAmritsarUser) {
+      setFilteredLocation('Amritsar');
+    } else if (isHoshiarpurUser) {
+      setFilteredLocation('Hoshiarpur');
+    } else if (isNawanshahrUser) {
+      setFilteredLocation('Nawanshahr');
+    } else if (isKhannaUser) {
+      setFilteredLocation('Khanna');
     } else {
       setFilteredLocation('');
     }
   };
 
   useEffect(() => {
-    const handleClear = async () => {
-      await getTicketHandler(UNDEFINED, 1, 'false', selectedFilters);
-    };
     handleClearFilter();
     handleApplyFilter();
-    handleClear();
   }, [localStorage.getItem('ticketType')]);
 
   const handleToggleChange = (event, newValue: any) => {
@@ -906,23 +945,59 @@ const TicketFilter = (props: {
                 onChange={handleLocation}
               >
                 <ToggleButton
-                  value="patna"
+                  value="Mohali"
                   sx={{
                     fontFamily: 'Outfit,sans-serif',
                     fontSize: '12px'
                   }}
                 >
-                  Patna
+                  Mohali
                 </ToggleButton>
 
                 <ToggleButton
-                  value="ranchi"
+                  value="Amritsar"
                   sx={{
                     fontFamily: 'Outfit,sans-serif',
                     fontSize: '12px'
                   }}
                 >
-                  Ranchi
+                  Amritsar
+                </ToggleButton>
+
+                <ToggleButton
+                  value="Hoshiarpur"
+                  sx={{
+                    fontFamily: 'Outfit,sans-serif',
+                    fontSize: '12px'
+                  }}
+                >
+                  Hoshiarpur
+                </ToggleButton>
+              </ToggleButtonGroup>
+              <ToggleButtonGroup
+                color="primary"
+                value={filteredLocation}
+                // onChange={() => setFilteredLocation('Amritsar')}
+                onChange={handleLocation}
+                sx={{ marginTop: '5px' }}
+              >
+                <ToggleButton
+                  value="Nawanshahr"
+                  sx={{
+                    fontFamily: 'Outfit,sans-serif',
+                    fontSize: '12px'
+                  }}
+                >
+                  Nawanshahr
+                </ToggleButton>
+                <ToggleButton
+                  value="Khanna"
+                  sx={{
+                    fontFamily: 'Outfit,sans-serif',
+                    fontSize: '12px'
+                  }}
+                >
+                  Khanna
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>
