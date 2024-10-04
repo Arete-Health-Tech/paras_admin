@@ -637,7 +637,7 @@ const StageCard = (props: Props) => {
           </Box>
         </Box>
 
-        {!isAuditor && localStorage.getItem('ticketType') && (
+        {!isAuditor && localStorage.getItem('ticketType') !== 'Follow-Up' && (
           <Box display="flex" flexDirection="row">
             <button className="Won-Btn won" onClick={handleOpen}>
               WON
