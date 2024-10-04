@@ -11,7 +11,8 @@ import {
   Tab,
   Tabs,
   Typography,
-  Badge
+  Badge,
+  InputAdornment
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import useUserStore from '../../../store/userStore';
@@ -418,7 +419,7 @@ const Home = () => {
                   direction="row"
                   className={Styles.date_filters}
                 >
-                  <TextField
+                  {/* <TextField
                     name="StartDate"
                     fullWidth
                     onChange={handleStartDateChange}
@@ -452,6 +453,48 @@ const Home = () => {
                         }
                       }
                     }}
+                  /> */}
+                  <TextField
+                    name="StartDate"
+                    fullWidth
+                    onChange={handleStartDateChange}
+                    value={dateRange[0] || ''}
+                    size="small"
+                    type="date"
+                    InputLabelProps={{
+                      shrink: true,
+                      style: { fontFamily: 'Outfit, san-serif' }
+                    }}
+                    inputProps={{
+                      max: new Date().toISOString().split('T')[0],
+                      style: {
+                        fontFamily: 'Outfit, san-serif',
+                        fontSize: '14px'
+                      }
+                    }}
+                    InputProps={{
+                      style: {
+                        border: 'none',
+                        fontFamily: 'Outfit, sans-serif',
+                        fontSize: '14px'
+                      },
+                      disableUnderline: true,
+                      startAdornment: !dateRange[0] && (
+                        <InputAdornment
+                          position="start"
+                          style={{ color: '#aaa', fontSize: '14px' }}
+                        >
+                          Start Date{' '}
+                        </InputAdornment>
+                      )
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          border: 'none'
+                        }
+                      }
+                    }}
                   />
 
                   <TextField
@@ -476,11 +519,19 @@ const Home = () => {
                     }}
                     InputProps={{
                       style: {
-                        border: 'none', // Removes the border
+                        border: 'none',
                         fontFamily: 'Outfit, sans-serif',
                         fontSize: '14px'
                       },
-                      disableUnderline: true
+                      disableUnderline: true,
+                      startAdornment: !dateRange[1] && (
+                        <InputAdornment
+                          position="start"
+                          style={{ color: '#aaa', fontSize: '14px' }}
+                        >
+                          Last Date{' '}
+                        </InputAdornment>
+                      )
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
