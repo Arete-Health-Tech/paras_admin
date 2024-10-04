@@ -496,7 +496,12 @@ const Home = () => {
           </Stack>
         </Stack>
         {!isFilterApply && (
-          <Stack className={Styles.home_section2}>
+          <Stack
+            className={Styles.home_section2}
+            onClick={() => {
+              navigate('/register');
+            }}
+          >
             <Stack className={Styles.createPrescription}>
               {[
                 {
@@ -515,11 +520,7 @@ const Home = () => {
                 // }
               ].map((item) => {
                 return (
-                  <Box
-                    onClick={() => {
-                      navigate('/register');
-                    }}
-                  >
+                  <Box>
                     <Stack className={Styles.createPrescription_Icon}>
                       <img src={item.icon} />
                     </Stack>

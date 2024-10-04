@@ -159,7 +159,7 @@ const Search = () => {
               <img src={SearchDefault} alt="No Department Selected" />
             </Stack>
             <Stack className={Styles.defaultScreen_text}>
-              Search Patients by entering UHID, Phone Number or Name
+              Search Patients by entering UHID or Name
             </Stack>
           </Stack>
         )}
