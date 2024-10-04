@@ -480,7 +480,7 @@ const TicketCard = (props: Props) => {
         {props?.patientData?.specialty ? (
           <Stack sx={locationStyle}>{props?.patientData?.specialty}</Stack>
         ) : (
-          <Stack sx={locationStyle}>Mohali</Stack>
+          <Stack sx={locationStyle}>Patna</Stack>
         )}
       </Box>
 
