@@ -153,7 +153,7 @@ const DownloadAllTickets = (props: Props) => {
         gender: ticket?.consumer[0]?.gender,
         phone: ticket?.consumer[0]?.phone,
         age: ageSetter(ticket?.consumer[0]?.dob),
-        location: ticket?.specialty ? ticket?.specialty : 'Mohali',
+        location: ticket?.specialty ? ticket?.specialty : 'Patna',
         stage: stageSetter(ticket?.stage) ? stageSetter(ticket?.stage) : '',
         department: departmentSetter(ticket?.prescription[0]?.departments[0]),
         doctor: doctorSetter(ticket?.prescription[0]?.doctor),
