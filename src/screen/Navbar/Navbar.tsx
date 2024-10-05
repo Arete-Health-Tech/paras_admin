@@ -386,7 +386,7 @@ const Navbar = ({ children }) => {
                                         </LightTooltip>
                                     </Stack>
                                 </Stack>
-                                <Stack className={styles.nav_Icon}>
+                                {/* <Stack className={styles.nav_Icon}>
                                     <Stack
                                         // onClick={() => goToPage('/ticket')}
                                         onClick={() => { localStorage.setItem("ticketType", "Diagnostics"); handleGoToTicket("Diagnostics") }}
@@ -447,7 +447,7 @@ const Navbar = ({ children }) => {
 
                                         </LightTooltip>
                                     </Stack>
-                                </Stack>
+                                </Stack> */}
                                 {/* this stack is for doctors,department,WhatsappFlow starts */}
 
                                 {/* <Stack className={styles.nav_Icon}>

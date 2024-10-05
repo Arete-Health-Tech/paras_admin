@@ -22,24 +22,16 @@ export const getTicket = async (
   won?: any,
   lose?: any
 ) => {
-  setDownloadDisable(true)
+  setDownloadDisable(true);
   const params = new URLSearchParams(selectedFilters).toString();
   // const timestamp = new Date().getTime();
   const { data } = await apiClient.get(
-    `${
-      localStorage.getItem('ticketType') === 'Admission'
-        ? '/ticket/'
-        : localStorage.getItem('ticketType') === 'Diagnostics'
-        ? '/diagnostics/getRepresentativediagnosticsTickets/'
-        : localStorage.getItem('ticketType') === 'Follow-Up'
-        ? '/followUp/FollowUpTickets'
-        : '/ticket/'
-    }?page=${pageNumber}&name=${name}&downloadAll=${downloadAll}&ticketId=${ticketId}&phonev=${phone}&fetchUpdated=${fetchUpdated}&${params}
+    `/ticket/?page=${pageNumber}&name=${name}&downloadAll=${downloadAll}&ticketId=${ticketId}&phonev=${phone}&fetchUpdated=${fetchUpdated}&${params}
     &specialty=${localStorage.getItem(
       'location'
     )}&specialtyforFilter=${filteredLocation}`
   );
-  setDownloadDisable(false)
+  setDownloadDisable(false);
   return data;
 };
 export const getAllTicket = async () => {
