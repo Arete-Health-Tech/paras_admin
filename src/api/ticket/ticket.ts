@@ -26,7 +26,9 @@ export const getTicket = async (
   const params = new URLSearchParams(selectedFilters).toString();
   // const timestamp = new Date().getTime();
   const { data } = await apiClient.get(
-    `/ticket/?page=${pageNumber}&name=${name}&downloadAll=${downloadAll}&ticketId=${ticketId}&phonev=${phone}&fetchUpdated=${fetchUpdated}&${params}
+    `/ticket/?page=${pageNumber}&name=${
+      name !== '' ? name : 'undefined'
+    }&downloadAll=${downloadAll}&ticketId=${ticketId}&phonev=${phone}&fetchUpdated=${fetchUpdated}&${params}
     &specialty=${localStorage.getItem(
       'location'
     )}&specialtyforFilter=${filteredLocation}`
