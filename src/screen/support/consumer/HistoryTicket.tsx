@@ -206,8 +206,8 @@ const HistoryTicket = ({ consumerData }) => {
                         className={Styles.presc}
                         onClick={() =>
                           handleOpen(
-                            history.prescription?.image,
-                            history.prescription?.image1
+                            history?.prescription?.image?.split('?')[0],
+                            history?.prescription?.image1?.split('?')[0]
                           )
                         }
                       >
@@ -301,7 +301,7 @@ const HistoryTicket = ({ consumerData }) => {
                               }
                               style={{
                                 width: '100%',
-                                height: '72vh',
+                                height: '62vh',
                                 objectFit: 'contain'
                               }}
                             />
@@ -314,7 +314,7 @@ const HistoryTicket = ({ consumerData }) => {
                               alt="Prescription"
                               style={{
                                 width: '100%',
-                                height: '72vh',
+                                height: '62vh',
                                 objectFit: 'contain'
                               }}
                             />

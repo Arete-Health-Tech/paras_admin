@@ -33,6 +33,10 @@ import { getRepresntativesHandler } from '../../../api/representive/representati
 import FileSaver from 'file-saver';
 import useReprentativeStore from '../../../store/representative';
 import useConsumerStore from '../../../store/consumerStore';
+import useServiceStore from '../../../store/serviceStore';
+import { getDepartmentsHandler } from '../../../api/department/departmentHandler';
+import { getDoctorsHandler } from '../../../api/doctor/doctorHandler';
+import { AxiosError } from 'axios';
 
 const style = {
   position: 'absolute',
@@ -59,6 +63,7 @@ const inputStyles = {
 };
 
 const Home = () => {
+  const { doctors, departments } = useServiceStore();
   const navigate = useNavigate();
   const { user } = useUserStore();
   const [isSelectDate, setIsSelectDate] = useState(false);
@@ -91,6 +96,44 @@ const Home = () => {
     };
   }, []);
 
+  // Fetching Doctors and Department..........
+  useEffect(() => {
+    (async function () {
+      await getDepartmentsHandler();
+      await getDoctorsHandler();
+    })();
+  }, []);
+  const fetchDoctorName = (id: any) => {
+    if (!id) return 'Unknown Doctor';
+    const specificDoctor = doctors?.find((doc) => doc._id === id);
+    let doctorName = (specificDoctor?.name ?? 'Unknown Doctor')
+      .split(/\s+/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
+    const titleIndex = doctorName.indexOf('Dr.');
+    if (titleIndex !== -1 && titleIndex + 3 < doctorName.length) {
+      const title = doctorName.slice(0, titleIndex + 3);
+      const name = doctorName.slice(titleIndex + 3);
+      doctorName = `${title} ${name}`;
+    }
+
+    return doctorName;
+  };
+
+  const fetchDepartmentName = (id: any) => {
+    if (!id) return 'Unknown Department';
+    const specificDepartment = departments?.find((dep) => dep._id === id);
+    let departmentName = (specificDepartment?.name ?? 'Unknown Department')
+      .split(/\s+/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
+    return departmentName;
+  };
+
+  // ..............................
+
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const startDate = e.target.value;
 
@@ -109,6 +152,11 @@ const Home = () => {
   };
 
   const fetchHistoryTickets = async () => {
+    setHistoryTicket([]);
+    setFilteredTickets([]);
+    setDateArray([]);
+    setSearch('');
+
     if (dateRange[0] && dateRange[1]) {
       try {
         setIsFilterApply(true);
@@ -315,16 +363,49 @@ const Home = () => {
     setIsFilterApply(false);
   };
 
-  const [searchValue, setSearchValue] = useState('');
-  const handleSearchUhid = (e) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    console.log('Searching for:', value);
-  };
-  const getTicketByUhid = () => {
-    console.log(searchValue, 'hid');
+  const [search, setSearch] = useState('');
+  const [isSearch, setIsSearch] = useState(false);
+  const [searchTickets, setSearchTickets] = useState<iTicket[]>([]);
+
+  const handleSearchUhid = async (search: any) => {
+    setDateRange(['', '']);
+    setHistoryTicket([]);
+    setFilteredTickets([]);
+    setDateArray([]);
+    setIsFilterApply(false);
+    console.log(search, 'search value');
+
+    if (search.length > 0) {
+      try {
+        const { data } = await apiClient.get(
+          `/consumer/searchTickets?search=${search}`
+        );
+        console.log(data, 'fetch data  testxox123');
+        if (data) {
+          setSearchTickets(data.tickets);
+          if (data.count === 0) {
+            setIsSearch(true);
+          }
+        } else {
+          setIsSearch(true);
+        }
+
+        // return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.error(error.response?.data?.message || 'An error occurred');
+        } else {
+          console.error('Unknown error', error);
+        }
+      }
+    }
   };
 
+  const handleSearchValue = (value) => {
+    setSearch(value);
+    setSearchTickets([]);
+    setIsSearch(false);
+  };
   return (
     <>
       <Box className={Styles.home_container}>
@@ -347,30 +428,62 @@ const Home = () => {
               <Logout />
             </Stack>
           </Stack>
+
           <Stack className={Styles.home_searchbar}>
             <Box display={'flex'} flexDirection={'column'}>
               <Box
                 display={'flex'}
                 flexDirection={'row'}
-                justifyContent={'space-between'}
+                // justifyContent={'space-between'}
                 gap={'10px'}
                 width={'100%'}
               >
-                <Stack width={'85%'} position={'relative'}>
-                  <input
-                    type="text"
-                    className={Styles.search_input}
-                    placeholder=" Search..."
-                    onChange={handleSearchUhid}
-                    value={searchValue}
-                  />
-                  <span
+                <Stack
+                  width={'85%'}
+                  position={'relative'}
+                  className={Styles.search_input_layout}
+                >
+                  <Stack width={'75%'}>
+                    <input
+                      type="text"
+                      className={Styles.search_input}
+                      placeholder=" Search..."
+                      onChange={(e) => {
+                        handleSearchValue(e.target.value);
+                        // setSearch( e.target.value );
+                      }}
+                      onBlur={(e) => handleSearchUhid(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSearchUhid(search);
+                        }
+                      }}
+                      style={{
+                        // border: '1px solid black',
+                        cursor: 'pointer',
+                        width: '90%'
+                      }}
+                    />
+                  </Stack>
+                  <Stack
+                    width={'18%'}
+                    // border={'1px solid black'}
                     className={Styles.search_icon}
-                    onClick={getTicketByUhid}
+                    onClick={() => {
+                      console.log(search, '---');
+                      handleSearchUhid(search);
+                    }}
                   >
-                    {' '}
-                    <SearchIcon />
-                  </span>
+                    <span
+                      style={{
+                        // border: '1px solid black',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {' '}
+                      <SearchIcon />
+                    </span>
+                  </Stack>
                 </Stack>
                 {isFilterApply ? (
                   <Stack width={'15%'} className={Styles.selectDate}>
@@ -569,9 +682,9 @@ const Home = () => {
                 //   icon: <Forum fontSize="medium" />,
                 //   path: '/query'
                 // }
-              ].map((item) => {
+              ].map((item, index) => {
                 return (
-                  <Box>
+                  <Box key={index}>
                     <Stack className={Styles.createPrescription_Icon}>
                       <img src={item.icon} />
                     </Stack>
@@ -589,7 +702,7 @@ const Home = () => {
         )}
 
         {dateArray && (
-          <Stack sx={{ marginBottom: '150px' }}>
+          <Stack sx={{ marginBottom: search.length < 0 ? '150px' : '0px' }}>
             {dateArray.map((date) => (
               <Box key={date}>
                 <Stack
@@ -734,8 +847,12 @@ const Home = () => {
                                         className={Styles.presc}
                                         onClick={() =>
                                           handleOpen(
-                                            ticket?.prescription[0]?.image,
-                                            ticket?.prescription[0]?.image1
+                                            ticket?.prescription[0]?.image?.split(
+                                              '?'
+                                            )[0],
+                                            ticket?.prescription[0]?.image1?.split(
+                                              '?'
+                                            )[0]
                                           )
                                         }
                                       >
@@ -769,6 +886,110 @@ const Home = () => {
           </Stack>
         )}
       </Box>
+
+      {search && (
+        <Stack className={Styles.additionalData}>
+          {searchTickets.length > 0 ? (
+            <>
+              <Stack className={Styles.card_history}>
+                {searchTickets.map((ticket) => (
+                  <Stack key={ticket._id}>
+                    <Box my={1.5} className={Styles.History_consumer}>
+                      <Stack className={Styles.History_consumer_up}>
+                        <Stack className={Styles.History_consumer_up1}>
+                          {ticket?.consumer[0] && (
+                            <Stack className={Styles.History_consumer_name}>
+                              {typeof ticket?.consumer[0]?.firstName ===
+                                'string' && ticket?.consumer[0]?.firstName}
+                            </Stack>
+                          )}
+                          <Stack className={Styles.History_consumer_gen_age}>
+                            {ticket?.consumer[0] &&
+                              ticket?.consumer[0]?.gender && (
+                                <Stack className={Styles.History_consumer_gen}>
+                                  {ticket?.consumer[0]?.gender}
+                                </Stack>
+                              )}
+                            {ticket?.consumer[0] &&
+                              ticket?.consumer[0]?.age && (
+                                <Stack className={Styles.History_consumer_age}>
+                                  {ticket?.consumer[0]?.age}
+                                </Stack>
+                              )}
+                          </Stack>
+                        </Stack>
+                        {ticket?.consumer[0] && (
+                          <Stack className={Styles.History_consumer_up2}>
+                            #{ticket?.consumer[0]?.uid}
+                          </Stack>
+                        )}
+                      </Stack>
+
+                      {ticket?.prescription[0] && (
+                        <Stack className={Styles.History_consumer_dep}>
+                          {fetchDoctorName(ticket.prescription[0].doctor)} {'('}
+                          {fetchDepartmentName(
+                            ticket?.prescription[0].departments[0]
+                          )}
+                          {')'}
+                        </Stack>
+                      )}
+                      {ticket && (
+                        <Stack className={Styles.History_consumer_createdDate}>
+                          {ticket.date.split('T')[0]}
+                        </Stack>
+                      )}
+
+                      <Box py={0.7} px={1}>
+                        {' '}
+                        <Stack className={Styles.border} my={1}></Stack>
+                      </Box>
+
+                      <Stack className={Styles.History_consumer_bt}>
+                        {ticket && (
+                          <Stack
+                            className={Styles.History_consumer_createdDate}
+                          >
+                            Created by: {getRepresentativeById(ticket.creator)}
+                          </Stack>
+                        )}
+                        {ticket?.prescription[0]?.image && (
+                          <Stack
+                            className={Styles.presc}
+                            onClick={() =>
+                              handleOpen(
+                                ticket?.prescription[0]?.image?.split('?')[0],
+                                ticket?.prescription[0]?.image1?.split('?')[0]
+                              )
+                            }
+                          >
+                            View Prescription
+                          </Stack>
+                        )}
+                      </Stack>
+                    </Box>
+                  </Stack>
+                ))}
+              </Stack>
+            </>
+          ) : (
+            <>
+              {isSearch ? (
+                <Stack className={Styles.defaultScreen_container}>
+                  <Stack className={Styles.imG}>
+                    <img src={SearchDefault} alt="No Department Selected" />
+                  </Stack>
+                  <Stack className={Styles.defaultScreen_text}>
+                    No Ticket Found
+                  </Stack>
+                </Stack>
+              ) : (
+                <></>
+              )}
+            </>
+          )}
+        </Stack>
+      )}
 
       {/* Modal */}
       <Modal
@@ -842,7 +1063,7 @@ const Home = () => {
                   }
                   style={{
                     width: '100%',
-                    height: '72vh',
+                    height: '60vh',
                     objectFit: 'contain'
                   }}
                 />
@@ -855,7 +1076,7 @@ const Home = () => {
                   alt="Prescription"
                   style={{
                     width: '100%',
-                    height: '72vh',
+                    height: '60vh',
                     objectFit: 'contain'
                   }}
                 />

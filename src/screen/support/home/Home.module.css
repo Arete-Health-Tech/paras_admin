@@ -47,16 +47,21 @@
   position: relative;
 }
 
-.search_input {
+.search_input_layout {
   border-radius: var(--8px, 8px);
   border: 1px solid var(--Borders-Light-Grey, #d4dbe5);
   background: var(--Icons-White, #fff);
   display: flex;
   height: var(--48px, 48px);
-  padding: var(--8px, 8px) 16px;
   align-items: center;
   gap: var(--Spacing-8px, 8px);
   align-self: stretch;
+  width: 100%;
+}
+.search_input {
+  padding: var(--8px, 8px) 16px;
+  height: var(--48px, 45px);
+  /* width: 70%; */
 }
 
 .search_input::placeholder {
@@ -66,12 +71,18 @@
 }
 
 .search_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: 4%; */
+  height: var(--48px, 48px);
   position: absolute;
   top: 46%;
   right: 8px;
   transform: translateY(-50%);
   color: #647491;
   pointer-events: none;
+  cursor: pointer;
 }
 
 /* Select Date */
@@ -212,7 +223,7 @@
 /* history patient */
 
 .additionalData {
-  margin-bottom: 150px;
+  margin-bottom: 10px;
 }
 
 .card_history {
