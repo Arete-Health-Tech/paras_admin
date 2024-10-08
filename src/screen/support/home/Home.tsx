@@ -702,7 +702,12 @@ const Home = () => {
         )}
 
         {dateArray && (
-          <Stack sx={{ marginBottom: search.length < 0 ? '150px' : '0px' }}>
+          <Stack
+            sx={{
+              marginBottom:
+                searchTickets && searchTickets.length > 0 ? '0px' : '150px'
+            }}
+          >
             {dateArray.map((date) => (
               <Box key={date}>
                 <Stack
