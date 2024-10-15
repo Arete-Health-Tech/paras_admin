@@ -1293,13 +1293,21 @@ const CreatePrescription = () => {
                           changePrescriptionValue('service', newValue)
                         }
                         options={foundServices}
-                        getOptionLabel={(option) => option.name}
+                        getOptionLabel={(option) =>
+                          capitalizeWords(option.name)
+                        }
                         renderInput={(params) => (
                           <TextField
                             onChange={(e) => findService(e.target.value)}
                             {...params}
                             label="Select surgery"
                             InputLabelProps={fieldCss}
+                            InputProps={{
+                              ...params.InputProps,
+                              style: {
+                                fontFamily: 'Outfit, sans-serif'
+                              }
+                            }}
                           />
                         )}
                       />
