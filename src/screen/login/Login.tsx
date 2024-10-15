@@ -104,7 +104,7 @@ const Login = () => {
           <Stack display={'flex'} flexDirection={'column'} gap={'8px'}>
             <Stack className={styles.login_box_title}>Welcome Back</Stack>
             <Stack className={styles.login_box_subtitle}>
-              Please Enter Your Details to Login into your account
+              Please enter your details to log in to your account.
             </Stack>
           </Stack>
 

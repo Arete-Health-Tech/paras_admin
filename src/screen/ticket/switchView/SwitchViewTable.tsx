@@ -213,6 +213,7 @@ function SwitchViewTable() {
   const [page, setPage] = useState<number>(1);
   const navigate = useNavigate();
   const currentRoute = useMatch(NAVIGATE_TO_TICKET);
+
   const redirectTicket = () => {
     navigate(
       `${
@@ -296,7 +297,9 @@ function SwitchViewTable() {
     }
   };
 
-  window.onload = redirectTicket;
+  if (!isSwitchView) {
+    window.onload = redirectTicket;
+  }
 
   useEffect(() => {
     (async function () {

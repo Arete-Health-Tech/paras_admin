@@ -1073,7 +1073,13 @@ const CreatePrescription = () => {
   const [isUploaded, setIsUploaded] = useState(false);
   const [isCaptured, setIsCaptured] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
+  const capitalizeWords = (str: string) =>
+    str
+      .toLowerCase()
+      .split(/[\s.]+/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+      .replace(/\s\./g, '.');
   return (
     <>
       <Box display={openCamera ? 'none' : 'block'} marginTop={'8px'}>
@@ -1094,19 +1100,25 @@ const CreatePrescription = () => {
                       style={{
                         textTransform: 'capitalize',
                         fontSize: '14px',
-                        fontFamily: 'Outfit,sans-serif'
+                        fontFamily: 'Outfit, sans-serif'
                       }}
                     >
                       {option.name}
                     </li>
                   )}
-                  getOptionLabel={(option) => option.name}
+                  getOptionLabel={(option) => capitalizeWords(option.name)}
                   options={departments.filter((item) => item.parent === null)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       label="Department"
                       InputLabelProps={fieldCss}
+                      InputProps={{
+                        ...params.InputProps,
+                        style: {
+                          fontFamily: 'Outfit, sans-serif'
+                        }
+                      }}
                     />
                   )}
                 />
@@ -1151,12 +1163,18 @@ const CreatePrescription = () => {
                   options={doctors.filter((item) =>
                     item.departments.includes(prescription.department)
                   )}
-                  getOptionLabel={(option) => option.name}
+                  getOptionLabel={(option) => capitalizeWords(option.name)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       label="Doctor"
                       InputLabelProps={fieldCss}
+                      InputProps={{
+                        ...params.InputProps,
+                        style: {
+                          fontFamily: 'Outfit, sans-serif'
+                        }
+                      }}
                     />
                   )}
                 />

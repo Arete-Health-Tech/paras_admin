@@ -821,17 +821,19 @@ const NSingleTicketDetails = (props: Props) => {
     await deleteTicket(ticketID);
     getTicketHandler(UNDEFINED, pageNumber, 'false', newFilter);
     await validateTicket(ticketID);
-    navigate(
-      `${
-        localStorage.getItem('ticketType') === 'Admission'
-          ? '/admission/'
-          : localStorage.getItem('ticketType') === 'Diagnostics'
-          ? '/diagnostics/'
-          : localStorage.getItem('ticketType') === 'Follow-Up'
-          ? '/follow-up/'
-          : '/ticket/'
-      }`
-    );
+    if (!isSwitchView) {
+      navigate(
+        `${
+          localStorage.getItem('ticketType') === 'Admission'
+            ? '/admission/'
+            : localStorage.getItem('ticketType') === 'Diagnostics'
+            ? '/diagnostics/'
+            : localStorage.getItem('ticketType') === 'Follow-Up'
+            ? '/follow-up/'
+            : '/ticket/'
+        }`
+      );
+    }
   };
 
   //This function is for assigne ticket to different representative
