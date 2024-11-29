@@ -418,7 +418,7 @@ const CustomModal = () => {
           }
         }}
         anchor="right"
-        open={true} //showForm
+        open={showForm} //showForm
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
       >
