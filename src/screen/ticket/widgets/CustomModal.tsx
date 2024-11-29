@@ -38,7 +38,11 @@ import '../singleTicket.css';
 import useTicketStore from '../../../store/ticketStore';
 import LeadDetail from '../SingleTicketSideBar/LeadDetail/LeadDetail';
 import ReactQuill from 'react-quill';
-import { callAgent, createPhoneData, createSecondOpinion } from '../../../api/ticket/ticket';
+import {
+  callAgent,
+  createPhoneData,
+  createSecondOpinion
+} from '../../../api/ticket/ticket';
 import { toast } from 'react-toastify';
 
 const CustomModal = () => {
@@ -73,12 +77,11 @@ const CustomModal = () => {
     additionalInfo: ''
   });
   const [challengeSelected, setChallengeSelected] = useState<string[]>([]);
-  const [ucid, setUCID] = useState("");
+  const [ucid, setUCID] = useState('');
   const [formData, setFormData] = useState<iTimer>({
     select: '',
     stoppedTimer: 0
   });
-
 
   const newFilter =
     localStorage.getItem('ticketType') === 'Admission'
@@ -89,45 +92,46 @@ const CustomModal = () => {
       ? filterTicketsFollowUp
       : filterTickets;
 
-
   useEffect(() => {
     const fetchTicket = tickets.find((element) => ticketID === element._id);
     setCurrentTicket(fetchTicket);
-  }, [ticketID])
+  }, [ticketID]);
   useEffect(() => {
-    if (currentTicket?.opinion !== undefined && currentTicket?.opinion?.length > 0) {
-      setSecondOpinion(prevState => ({
+    if (
+      currentTicket?.opinion !== undefined &&
+      currentTicket?.opinion?.length > 0
+    ) {
+      setSecondOpinion((prevState) => ({
         ...prevState,
         type: currentTicket?.opinion[0]?.type,
         hospital: currentTicket?.opinion[0]?.hospital,
         doctor: currentTicket?.opinion[0]?.doctor,
         additionalInfo: currentTicket?.opinion[0]?.additionalInfo
-      }))
-      setChallengeSelected(currentTicket?.opinion[0]?.challengeSelected
-      )
+      }));
+      setChallengeSelected(currentTicket?.opinion[0]?.challengeSelected);
       setIsVisible(true);
     }
-  }, [currentTicket])
+  }, [currentTicket]);
 
   const startTimer = async () => {
-    const returnedData = await callAgent(currentTicket?.consumer[0]?.phone)
+    const returnedData = await callAgent(currentTicket?.consumer[0]?.phone);
     // const returnedData = await callAgent(currentTicket?.consumer[0]?.phone)
-    if (returnedData.status == "Agent is not available") {
-      toast.error("Agent is not loggedIn")
-      setAgentLogin(true)
-    } else if (returnedData.status == "queued successfully") {
+    if (returnedData.status == 'Agent is not available') {
+      toast.error('Agent is not loggedIn');
+      setAgentLogin(true);
+    } else if (returnedData.status == 'queued successfully') {
       if (timerRef.current !== null) {
         clearInterval(timerRef.current);
       }
       timerRef.current = setInterval(() => {
         setTimer((prevTimer) => prevTimer + 1);
       }, 1000);
-      setUCID(returnedData.ucid)
+      setUCID(returnedData.ucid);
       setChipOpen(true);
       setDialogOpen(true);
     } else {
-      toast.error(returnedData.status)
-      setAgentLogin(true)
+      toast.error(returnedData.status);
+      setAgentLogin(true);
     }
     // setChipOpen(true);
     // setDialogOpen(true);
@@ -159,11 +163,11 @@ const CustomModal = () => {
       }));
       const sachin: any = ticketID;
 
-      //This function is for handle the time 
+      //This function is for handle the time
       const result = await createTimerHandler(formData, sachin);
 
-      //This if condition is for checking the notes which is inside the calling drawer 
-      if (note !== '<p><br></p>' && note !== "") {
+      //This if condition is for checking the notes which is inside the calling drawer
+      if (note !== '<p><br></p>' && note !== '') {
         const data: iNote = {
           text: note,
           ticket: sachin,
@@ -180,32 +184,30 @@ const CustomModal = () => {
         ticketid: ticketID
       };
 
-      await createSecondOpinion(opinion)
+      await createSecondOpinion(opinion);
       // This is for second opinion end
       // This is for creating phone data recording properly start
       const phoneData = {
         totalTime: timer,
         ucid: ucid,
         ticket: ticketID
-      }
-      await createPhoneData(phoneData)
+      };
+      await createPhoneData(phoneData);
       // This is for creating phone data recording properly end
 
-
-
-      //This if condition is for checking that what disposition we have selected 
-      if (formData.select === "Rescheduled Call") {
-        setIsModalOpenCall(true)
+      //This if condition is for checking that what disposition we have selected
+      if (formData.select === 'Rescheduled Call') {
+        setIsModalOpenCall(true);
       }
-     if (
-       ['Awaiting test results', 'Awaiting TPA approvals', 'Under MM'].some(
-         (status) => challengeSelected.includes(status)
-       )
-     ) {
-       setIsModalOpenCall(true);
-     }
+      if (
+        ['Awaiting test results', 'Awaiting TPA approvals', 'Under MM'].some(
+          (status) => challengeSelected.includes(status)
+        )
+      ) {
+        setIsModalOpenCall(true);
+      }
 
-      // on submit button click after 1 second the ticket data will call 
+      // on submit button click after 1 second the ticket data will call
       (async () => {
         await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
       })();
@@ -223,8 +225,8 @@ const CustomModal = () => {
           doctor: '',
           additionalInfo: ''
         });
-        setIsVisible(false)
-        setChallengeSelected([])
+        setIsVisible(false);
+        setChallengeSelected([]);
       }
     } catch (error) {
       console.log(error);
@@ -260,7 +262,7 @@ const CustomModal = () => {
     setFormData({
       select: '',
       stoppedTimer: 0
-    })
+    });
     setChipOpen(false);
   };
 
@@ -272,7 +274,12 @@ const CustomModal = () => {
     'Bad experience',
     'Under MM',
     'Not happy with Doctor',
-    'Financial constraints'
+    'Financial constraints',
+    'No decision yet',
+    'Date set for surgery',
+    'Date not given for Surgery',
+    'Reschdule Call',
+    'Query with Doctor'
   ];
   const handleChallenge = (challenges) => {
     if (challengeSelected?.includes(challenges)) {
@@ -281,7 +288,9 @@ const CustomModal = () => {
       );
       setChallengeSelected(filteredData);
     } else {
-      setChallengeSelected((prevChallenges) => (prevChallenges ? [...prevChallenges, challenges] : [challenges]));
+      setChallengeSelected((prevChallenges) =>
+        prevChallenges ? [...prevChallenges, challenges] : [challenges]
+      );
     }
   };
 
@@ -289,9 +298,12 @@ const CustomModal = () => {
     <div>
       {chipOpen == true ? (
         <Stack className="Clicked-call" display="flex" flexDirection="row">
-          <span className="Clicked-call-icon" onClick={() => {
-            setShowForm(true);
-          }}>
+          <span
+            className="Clicked-call-icon"
+            onClick={() => {
+              setShowForm(true);
+            }}
+          >
             <img src={ClickedCallButtonIcon} alt="" />
           </span>
           <span className="Clicked-call-text">Calling</span>
@@ -340,7 +352,7 @@ const CustomModal = () => {
       <Dialog
         // open={showForm}
         open={false}
-        onClose={() => { }}
+        onClose={() => {}}
         aria-labelledby="form-dialog-title"
         aria-describedby="form-dialog-description"
       >
@@ -406,7 +418,7 @@ const CustomModal = () => {
           }
         }}
         anchor="right"
-        open={showForm}//showForm
+        open={true} //showForm
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
       >
@@ -416,9 +428,9 @@ const CustomModal = () => {
           </Stack> */}
           <Box
             sx={{
-              width: "65%",
-              display: "flex",
-              flexDirection: "column",
+              width: '65%',
+              display: 'flex',
+              flexDirection: 'column',
               backgroundColor: '#F6F7F9'
             }}
           >
@@ -429,7 +441,7 @@ const CustomModal = () => {
               alignItems="center"
               sx={{
                 borderBottom: '1px solid #D4DBE5',
-                padding: "20px 15px",
+                padding: '20px 15px',
                 position: 'sticky',
                 top: 0
               }}
@@ -438,15 +450,20 @@ const CustomModal = () => {
                 className="call-modal-title"
                 sx={{ fontSize: '18px !important' }}
               >
-                Call with {currentTicket?.consumer[0]?.firstName} {currentTicket?.consumer[0]?.lastName}
+                Call with {currentTicket?.consumer[0]?.firstName}{' '}
+                {currentTicket?.consumer[0]?.lastName}
               </Stack>
             </Stack>
-            <Box
-              className="customModalFirstSection"
-            >
-
+            <Box className="customModalFirstSection">
               <Stack p={2}>
-                <Stack sx={{ borderRadius: '1rem', backgroundColor: '#FFF', paddingLeft: 2 }} p={1}>
+                <Stack
+                  sx={{
+                    borderRadius: '1rem',
+                    backgroundColor: '#FFF',
+                    paddingLeft: 2
+                  }}
+                  p={1}
+                >
                   <Stack
                     className="reminder-modal-title"
                     sx={{ fontSize: '14px !important', fontWeight: 500 }}
@@ -505,8 +522,19 @@ const CustomModal = () => {
               </Stack>
 
               <Stack p={2}>
-                <Stack sx={{ borderRadius: '1rem', backgroundColor: '#FFF', paddingLeft: 2 }} p={1}>
-                  <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                <Stack
+                  sx={{
+                    borderRadius: '1rem',
+                    backgroundColor: '#FFF',
+                    paddingLeft: 2
+                  }}
+                  p={1}
+                >
+                  <Box
+                    display={'flex'}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                  >
                     <Stack
                       className="reminder-modal-title"
                       sx={{ fontSize: '14px !important', fontWeight: 500 }}
@@ -526,48 +554,56 @@ const CustomModal = () => {
                   {isVisible && (
                     <Stack className="calling-btn">
                       <Box sx={{ width: '100%' }}>
-                        <RadioGroup
-                          row
-                          name="consultationStatus"
-                        >
+                        <RadioGroup row name="consultationStatus">
                           <FormControlLabel
                             value="considering"
                             control={
                               <Radio
-                                checked={secondOpinion.type === "Considering Consultation"}
+                                checked={
+                                  secondOpinion.type ===
+                                  'Considering Consultation'
+                                }
                               />
                             }
                             label="Considering Consultation"
-                            onClick={() => setSecondOpinion(prevState => ({
-                              ...prevState,
-                              type: "Considering Consultation"
-                            }))}
+                            onClick={() =>
+                              setSecondOpinion((prevState) => ({
+                                ...prevState,
+                                type: 'Considering Consultation'
+                              }))
+                            }
                           />
-                          < FormControlLabel
+                          <FormControlLabel
                             value="consulted"
                             control={
                               <Radio
-                                checked={secondOpinion.type === "consulted"}
+                                checked={secondOpinion.type === 'consulted'}
                               />
                             }
                             label="Consulted"
-                            onClick={() => setSecondOpinion(prevState => ({
-                              ...prevState,
-                              type: "consulted"
-                            }))}
+                            onClick={() =>
+                              setSecondOpinion((prevState) => ({
+                                ...prevState,
+                                type: 'consulted'
+                              }))
+                            }
                           />
-                          < FormControlLabel
+                          <FormControlLabel
                             value="we are second opinon"
                             control={
                               <Radio
-                                checked={secondOpinion.type === "we are second opinon"}
+                                checked={
+                                  secondOpinion.type === 'we are second opinon'
+                                }
                               />
                             }
                             label="we are second opinon"
-                            onClick={() => setSecondOpinion(prevState => ({
-                              ...prevState,
-                              type: "we are second opinon"
-                            }))}
+                            onClick={() =>
+                              setSecondOpinion((prevState) => ({
+                                ...prevState,
+                                type: 'we are second opinon'
+                              }))
+                            }
                           />
                         </RadioGroup>
 
@@ -579,10 +615,12 @@ const CustomModal = () => {
                             InputLabelProps={{ shrink: true }}
                             size="small"
                             value={secondOpinion.hospital}
-                            onChange={(e) => setSecondOpinion(prevState => ({
-                              ...prevState,
-                              hospital: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setSecondOpinion((prevState) => ({
+                                ...prevState,
+                                hospital: e.target.value
+                              }))
+                            }
                           />
                           <TextField
                             required
@@ -591,10 +629,12 @@ const CustomModal = () => {
                             InputLabelProps={{ shrink: true }}
                             size="small"
                             value={secondOpinion.doctor}
-                            onChange={(e) => setSecondOpinion(prevState => ({
-                              ...prevState,
-                              doctor: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setSecondOpinion((prevState) => ({
+                                ...prevState,
+                                doctor: e.target.value
+                              }))
+                            }
                           />
                         </Box>
 
@@ -607,10 +647,12 @@ const CustomModal = () => {
                             InputLabelProps={{ shrink: true }}
                             size="small"
                             value={secondOpinion.additionalInfo}
-                            onChange={(e) => setSecondOpinion(prevState => ({
-                              ...prevState,
-                              additionalInfo: e.target.value
-                            }))}
+                            onChange={(e) =>
+                              setSecondOpinion((prevState) => ({
+                                ...prevState,
+                                additionalInfo: e.target.value
+                              }))
+                            }
                           />
                         </Box>
                       </Box>
@@ -620,7 +662,14 @@ const CustomModal = () => {
               </Stack>
 
               <Stack p={2}>
-                <Stack sx={{ borderRadius: '1rem', backgroundColor: '#FFF', paddingLeft: 2 }} p={1}>
+                <Stack
+                  sx={{
+                    borderRadius: '1rem',
+                    backgroundColor: '#FFF',
+                    paddingLeft: 2
+                  }}
+                  p={1}
+                >
                   <Box display={'flex'} justifyContent={'space-between'}>
                     <Stack
                       className="reminder-modal-title"
@@ -638,20 +687,35 @@ const CustomModal = () => {
                             label={challenge}
                             onDelete={() => handleChallenge(challenge)}
                             deleteIcon={
-                              challengeSelected && challengeSelected?.includes(challenge) ? (
-                                <div style={{ backgroundColor: 'white', padding: '5px', borderRadius: '50%' }}>
+                              challengeSelected &&
+                              challengeSelected?.includes(challenge) ? (
+                                <div
+                                  style={{
+                                    backgroundColor: 'white',
+                                    padding: '5px',
+                                    borderRadius: '50%'
+                                  }}
+                                >
                                   <img src={CloseModalIcon1} alt="" />
                                 </div>
                               ) : (
-                                <div style={{ backgroundColor: 'white', padding: '5px', borderRadius: '50%' }}>
+                                <div
+                                  style={{
+                                    backgroundColor: 'white',
+                                    padding: '5px',
+                                    borderRadius: '50%'
+                                  }}
+                                >
                                   <img src={add_icon} alt="" />
                                 </div>
                               )
                             }
                             style={{
-                              backgroundColor: challengeSelected && challengeSelected.includes(challenge)
-                                ? '#DAE8FF'
-                                : '#F6F7F9',
+                              backgroundColor:
+                                challengeSelected &&
+                                challengeSelected.includes(challenge)
+                                  ? '#DAE8FF'
+                                  : '#F6F7F9',
                               fontSize: '0.875rem',
                               color: '#000',
                               fontFamily: 'Outfit,san-serif',
@@ -666,7 +730,14 @@ const CustomModal = () => {
               </Stack>
 
               <Stack p={2}>
-                <Stack sx={{ borderRadius: '1rem', backgroundColor: '#FFF', paddingLeft: 2 }} p={1}>
+                <Stack
+                  sx={{
+                    borderRadius: '1rem',
+                    backgroundColor: '#FFF',
+                    paddingLeft: 2
+                  }}
+                  p={1}
+                >
                   <Box display={'flex'} justifyContent={'space-between'}>
                     <Stack
                       className="reminder-modal-title"
@@ -689,11 +760,13 @@ const CustomModal = () => {
             </Box>
             <Box className="submit-call-response">
               <Stack className="Timer">{timer}</Stack>
-              <Stack display="flex" flexDirection="row" justifyContent="space-between" gap={"10px"}>
-                <button
-                  className='reminder-cancel-btn'
-                  onClick={handleClose}
-                >
+              <Stack
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                gap={'10px'}
+              >
+                <button className="reminder-cancel-btn" onClick={handleClose}>
                   Cancel
                 </button>
                 <button
@@ -723,7 +796,7 @@ const CustomModal = () => {
       </Drawer>
 
       {/* </Modal> */}
-    </div >
+    </div>
   );
 };
 
