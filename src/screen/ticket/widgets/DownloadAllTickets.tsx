@@ -79,9 +79,13 @@ const DownloadAllTickets = (props: Props) => {
   const assigneSetter = (id: string) => {
     return representative.find((element) => element._id === id);
   };
-  const noteSetter = (id: string) => {
+  const noteSetter = (id: string): string[] => {
     const foundItems = allNotes.filter((item) => item.ticket === id);
-    const notesArray = foundItems.map((item) => item.text);
+
+    const notesArray = foundItems.map(
+      (item) => item.text.replace(/<[^>]*>/g, '') // Remove HTML tags
+    );
+
     return notesArray.length > 0 ? notesArray : [];
   };
   const handleAssigne = (assignees: any) => {
@@ -99,16 +103,6 @@ const DownloadAllTickets = (props: Props) => {
       }
     }
     return result;
-
-    // return assignees.reduce((result: fullName: string[], assigneeId: string) => {
-    //     const rep = representative.find(rep => rep._id === assigneeId);
-    //     if (rep) {
-    //         // const initials = `${rep.firstName.charAt(0)}${rep.lastName.charAt(0)}`;
-    //         const fullName = `${rep.firstName} ${rep.lastName}`;
-    //         result.push(fullName );
-    //     }
-    //     return result;
-    // }, []);
   };
 
   function subStageName(code: number): string {
@@ -154,7 +148,9 @@ const DownloadAllTickets = (props: Props) => {
         phone: ticket?.consumer[0]?.phone,
         age: ageSetter(ticket?.consumer[0]?.dob),
         location: ticket?.specialty ? ticket?.specialty : 'Patna',
-        stage: stageSetter(ticket?.stage) ? stageSetter(ticket?.stage) : '',
+        stage: stageSetter(ticket?.stage[0]?._id)
+          ? stageSetter(ticket?.stage[0]?._id)
+          : '',
         department: departmentSetter(ticket?.prescription[0]?.departments[0]),
         doctor: doctorSetter(ticket?.prescription[0]?.doctor),
         admissionType: ticket.prescription[0].admission
@@ -166,7 +162,9 @@ const DownloadAllTickets = (props: Props) => {
         isPharmacy: ticket?.prescription[0]?.isPharmacy
           ? 'Advised'
           : 'No Advised',
-        assigned: handleAssigne(ticket.assigned).join(' '),
+        assigned:
+          handleAssigne(ticket?.assigned[0]?._id).join(' ') ||
+          ticket?.assigned[0]?.firstName,
         CTScan: ticket?.prescription[0]?.diagnostics.includes('CT-Scan')
           ? 'Yes'
           : 'No',

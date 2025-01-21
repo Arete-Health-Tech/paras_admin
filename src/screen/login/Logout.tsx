@@ -9,6 +9,7 @@ import useUserStore from '../../store/userStore';
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from '@mui/material';
 import { apiClient } from '../../api/apiClient';
+import useTicketStore from '../../store/ticketStore';
 
 type Props = {};
 
@@ -60,24 +61,28 @@ const Logout = (props: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { user, setUser } = useUserStore();
   const open = Boolean(anchorEl);
-
+  const { setPageNumber } = useTicketStore();
   const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleLogout = async () => {
-    const { data } = await apiClient.post('/representative/logOut', { userId: user?._id });
+    const { data } = await apiClient.post('/representative/logOut', {
+      userId: user?._id
+    });
     handleClose();
     cookie.remove('user');
-    localStorage.clear()
+    localStorage.clear();
     setUser(null);
     navigate('/login');
+    setPageNumber(1);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <div>
       <Button
@@ -87,7 +92,7 @@ const Logout = (props: Props) => {
         aria-expanded={open ? 'true' : undefined}
         disableElevation
         onClick={handleClick}
-      // endIcon={<KeyboardArrowDownIcon />}
+        // endIcon={<KeyboardArrowDownIcon />}
       >
         <Avatar sx={{ fontSize: '1rem', bgcolor: 'orange' }}>
           {user?.firstName[0]}
@@ -103,7 +108,11 @@ const Logout = (props: Props) => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem sx={{ margonRight: "-20px" }} onClick={handleLogout} disableRipple>
+        <MenuItem
+          sx={{ margonRight: '-20px' }}
+          onClick={handleLogout}
+          disableRipple
+        >
           Logout
         </MenuItem>
       </StyledMenu>

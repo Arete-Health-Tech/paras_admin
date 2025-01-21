@@ -257,7 +257,7 @@ const Navbar = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
-  const { setTicketType } = useTicketStore();
+  const { setTicketType, setPageNumber } = useTicketStore();
   const [expandedMenu, setExpandedMenu] = React.useState(null);
   const { isSwitchView, setIsSwitchView } = useTicketStore();
 
@@ -340,6 +340,7 @@ const Navbar = ({ children }) => {
                     onClick={() => {
                       localStorage.setItem('ticketType', '');
                       goToPage('/');
+                      setPageNumber(1);
                     }}
                     sx={{
                       display: 'flex',

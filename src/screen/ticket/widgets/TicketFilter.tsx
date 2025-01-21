@@ -928,7 +928,7 @@ const TicketFilter = (props: {
                 </ToggleButton>
 
                 <ToggleButton
-                  value="ranchi"
+                  value="Ranchi"
                   sx={{
                     fontFamily: 'Outfit,sans-serif',
                     fontSize: '12px'
