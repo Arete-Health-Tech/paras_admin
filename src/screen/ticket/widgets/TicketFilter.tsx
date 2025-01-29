@@ -71,7 +71,7 @@ export const ticketFilterCount = (
   let locationCount = 0;
   if (!isPatnaUser && !isRanchiUser) {
     locationCount =
-      filteredLocation == 'patna' || filteredLocation == 'ranchi' ? 1 : 0;
+      filteredLocation == 'Patna' || filteredLocation == 'Ranchi' ? 1 : 0;
   } else {
     locationCount = 0;
     console.log('good');
@@ -918,7 +918,7 @@ const TicketFilter = (props: {
                 onChange={handleLocation}
               >
                 <ToggleButton
-                  value="patna"
+                  value="Patna"
                   sx={{
                     fontFamily: 'Outfit,sans-serif',
                     fontSize: '12px'
