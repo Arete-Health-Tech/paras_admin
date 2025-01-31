@@ -161,9 +161,10 @@ const PatientRecord = ({ isPatient }) => {
     const service = services?.filter(
       (elements) => currentTicket?.prescription?.[0]?.service === elements._id
     );
+    // console.log(service[0]?.name,"service[0]?.name")
     return service[0]?.name;
   };
-
+  console.log(getServiceName(), "Returned Service Name");
   const handleAdmissionSubmit = async (event, item) => {
     event.preventDefault();
     // setAdmissionType(item);
@@ -363,6 +364,9 @@ const PatientRecord = ({ isPatient }) => {
       setDisableButton(false);
     }
   };
+
+
+  console.log(currentTicket?.prescription[0],"prescription")
 
   return (
     <>
@@ -588,14 +592,14 @@ const PatientRecord = ({ isPatient }) => {
             </Box>
           ) : (
             <>
-              {currentTicket?.prescription[0]?.service && (
+              {(currentTicket?.prescription?.[0]?.service || getServiceName()) && (
                 <>
                   <Stack display={'flex'} flexDirection={'row'}>
                     <Stack className="dot-list">
                       <span>&#8226;</span>
                     </Stack>
                     <Stack className="Patient-records-data">
-                      {currentTicket?.prescription[0]?.service?.name}
+                    {currentTicket?.prescription?.[0]?.service?.name || getServiceName() || "N/A"}
                     </Stack>
                   </Stack>
                 </>
