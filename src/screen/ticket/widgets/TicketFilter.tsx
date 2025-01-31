@@ -853,6 +853,15 @@ const TicketFilter = (props: {
                 >
                   DC
                 </ToggleButton>
+                <ToggleButton
+                  value="Yes"
+                  sx={{
+                    fontFamily: 'Outfit,sans-serif',
+                    fontSize: '12px'
+                  }}
+                >
+                  Yes
+                </ToggleButton>
               </ToggleButtonGroup>
             </Box>
           )}

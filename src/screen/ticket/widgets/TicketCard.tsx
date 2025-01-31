@@ -535,13 +535,9 @@ const TicketCard = (props: Props) => {
         ) : (
           <></>
         )}
-        {props?.patientData?.prescription[0]?.diagnostics.length > 0 ? (
-          <>
-            <Stack className="ticket-card-line3-tag">Diagonstic</Stack>
-          </>
-        ) : (
-          <></>
-        )}
+   {(props?.patientData?.prescription[0]?.diagnostics ?? []).filter(Boolean).length > 0 ? (
+  <Stack className="ticket-card-line3-tag">Diagnostic</Stack>
+) : null}
 
         {props?.patientData?.estimate?.length > 0 ? (
           <>

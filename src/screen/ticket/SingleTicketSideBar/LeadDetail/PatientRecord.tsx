@@ -636,7 +636,7 @@ const PatientRecord = ({ isPatient }) => {
         <Box className="Patient-records">
           <Box className="Patient-records-Head">
             <Stack className="Patient-records-Heading">Diagnostics Test</Stack>
-            {true ? ( // Assuming isPatient is always true for the example
+            {/* {true ? ( // Assuming isPatient is always true for the example
               <Stack display="flex" flexDirection="row">
                 {isDiagonsticTestEditing ? (
                   <Stack display="flex" flexDirection="row" gap={'5px'}>
@@ -676,7 +676,7 @@ const PatientRecord = ({ isPatient }) => {
                   </>
                 )}
               </Stack>
-            ) : null}
+            ) : null} */}
           </Box>
           {currentTicket?.prescription?.[0]?.diagnostics.map(
             (diagnostic, index) => (
