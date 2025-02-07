@@ -443,11 +443,15 @@ const Dashboard = (props: Props) => {
         const fetchedRepresentative = await getRepresntativesHandler();
         const patnaFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phone && rep.Unit === '66fa9666589c46100af402c9'
+            rep.phone === phone &&
+            rep.Unit === '66fa9666589c46100af402c9' &&
+            rep.role === 'ADMIN'
         );
         const ranchiFound = fetchedRepresentative?.some(
           (rep) =>
-            rep.phone === phone && rep.Unit === '66f7bdca783f9aaba1099ce4'
+            rep.phone === phone &&
+            rep.Unit === '66f7bdca783f9aaba1099ce4' &&
+            rep.role === 'ADMIN'
         );
 
         if (patnaFound) {
