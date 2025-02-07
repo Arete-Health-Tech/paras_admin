@@ -148,7 +148,7 @@ const DownloadAllTickets = (props: Props) => {
           uhid: ticket?.consumer[0]?.uid,
           gender: ticket?.consumer[0]?.gender,
           phone: ticket?.consumer[0]?.phone,
-          age: ageSetter(ticket?.consumer[0]?.dob),
+          age: Number(ticket?.consumer[0]?.age) || '',
           location: ticket?.specialty ? ticket?.specialty : 'Patna',
           stage: stageSetter(ticket?.stage[0]?._id)
             ? stageSetter(ticket?.stage[0]?._id)
