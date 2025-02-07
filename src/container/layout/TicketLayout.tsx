@@ -572,50 +572,104 @@ const Ticket = () => {
   //   const copiedFilterTickets = { ...filterTickets };
   //   await getTicketHandler(UNDEFINED, 1, 'false', copiedFilterTickets);
   // }
+
+  function hasChanges(newFilter, initialState) {
+    const optionalKeys = ['admissionType', 'diagnosticsType'];
+    const filteredInitialState = { ...initialState };
+    const filteredCurrentState = { ...newFilter };
+
+    for (const key of optionalKeys) {
+      // Remove the optional keys from the initial state if not present in current state
+      if (!(key in newFilter)) {
+        delete filteredInitialState[key];
+      }
+    }
+
+    // Compare the filtered objects
+    return (
+      JSON.stringify(filteredInitialState) ===
+      JSON.stringify(filteredCurrentState)
+    );
+  }
+
   useEffect(() => {
     const refetchTickets = async () => {
-      let pageNumber = page;
-      if (ticketID) {
-      } else {
-        await getTicketHandler(searchName, pageNumber, 'false', newFilter);
-        await getTicketAfterNotification(
-          searchName,
-          pageNumber,
-          'false',
-          newFilter
-        );
+      const initialStateForFilter = {
+        stageList: [],
+        representative: null,
+        results: null,
+        admissionType: [],
+        diagnosticsType: [],
+        dateRange: [],
+        status: [],
+        followUp: null
+      };
+      console.log(
+        'typeof hasChanges(newFilter)',
+        hasChanges(newFilter, initialStateForFilter)
+      );
+      console.log(pageNumber, 'pageNumber');
+      console.log(
+        localStorage.getItem('ticketType') === 'Diagnostics',
+        'localStorage.getItem'
+      );
+      console.log(searchByName, 'searchByName inside useffect');
+      if (
+        pageNumber === 1 &&
+        hasChanges(newFilter, initialStateForFilter) &&
+        localStorage.getItem('ticketType') === 'Diagnostics'
+      ) {
+        console.log(pageNumber, 'inside if');
+        await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
+        if (localStorage.getItem('ticketType') === 'Admission') {
+          await getTicketAfterNotification(
+            searchByName,
+            pageNumber,
+            'false',
+            newFilter
+          );
+        }
       }
     };
 
-    // socket.on(socketEventConstants.REFETCH_TICKETS, refetchTickets);
-    if (localStorage.getItem('ticketType') === 'Diagnostics') {
-      socket.on(
-        socketEventConstants.DIAGNOSTICS_REFETCH_TICKETS,
-        refetchTickets
-      );
-    } else if (localStorage.getItem('ticketType') === 'Follow-Up') {
-      socket.on(socketEventConstants.FOLLOWUP_REFETCH_TICKETS, refetchTickets);
-    } else if (localStorage.getItem('ticketType') === 'Admission') {
-      socket.on(socketEventConstants.REFETCH_TICKETS, refetchTickets);
-    }
+    const initializeSocketListeners = () => {
+      const ticketType = localStorage.getItem('ticketType');
+      if (ticketType === 'Diagnostics') {
+        socket.on(
+          socketEventConstants.DIAGNOSTICS_REFETCH_TICKETS,
+          refetchTickets
+        );
+      } else if (ticketType === 'Follow-Up') {
+        socket.on(
+          socketEventConstants.FOLLOWUP_REFETCH_TICKETS,
+          refetchTickets
+        );
+      } else if (ticketType === 'Admission') {
+        socket.on(socketEventConstants.REFETCH_TICKETS, refetchTickets);
+      }
+    };
+
+    // Delay the listener setup slightly to ensure resources are ready
+    const timer = setTimeout(initializeSocketListeners, 100);
 
     return () => {
-      if (localStorage.getItem('ticketType') === 'Diagnostics') {
+      clearTimeout(timer);
+      const ticketType = localStorage.getItem('ticketType');
+      if (ticketType === 'Diagnostics') {
         socket.off(
           socketEventConstants.DIAGNOSTICS_REFETCH_TICKETS,
           refetchTickets
         );
-      } else if (localStorage.getItem('ticketType') === 'Follow-Up') {
+      } else if (ticketType === 'Follow-Up') {
         socket.off(
           socketEventConstants.FOLLOWUP_REFETCH_TICKETS,
           refetchTickets
         );
-      } else if (localStorage.getItem('ticketType') === 'Admission') {
+      } else if (ticketType === 'Admission') {
         socket.off(socketEventConstants.REFETCH_TICKETS, refetchTickets);
       }
-      // socket.off(socketEventConstants.REFETCH_TICKETS, refetchTickets);
     };
-  }, [newFilter, page, searchName]);
+  }, [pageNumber, searchByName]);
 
   // useEffect(() => {
   //   const refetchTickets = async () => {
