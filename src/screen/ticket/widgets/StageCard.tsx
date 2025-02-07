@@ -42,6 +42,20 @@ import CheckedActiveIcon from '../../../assets/NotActive.svg';
 import RightArrowIcon from '../../../assets/arrow-right.svg';
 import documentIcon from '../../../assets/document-text.svg';
 import '../singleTicket.css';
+const fieldCss = {
+  style: {
+    fontSize: '14px',
+    color: 'rgba(128, 128, 128, 0.744)',
+    fontFamily: `"Outfit",sans-serif`
+  }
+};
+const fieldInputCss = {
+  style: {
+    fontSize: '14px',
+    color: '#080F1A',
+    fontFamily: `"Outfit",sans-serif`
+  }
+};
 type Props = {
   currentTicket: iTicket | any;
   setTicketUpdateFlag: any;
@@ -361,8 +375,19 @@ const StageCard = (props: Props) => {
       isPayloadEmpty = false;
     }
 
+    // if (lose) {
+    //   formdata.append('dropReason', lose);
+    //   isPayloadEmpty = false;
+    // }
+
     if (lose) {
-      formdata.append('dropReason', lose);
+      if (lose === 'Chose another hospital - Which Hospital' && hospitalName) {
+        const fullReason = `${lose} ${hospitalName}`; // Concatenate the reason with the hospital name
+        console.log('Full Reason:', fullReason); // Debugging
+        formdata.append('dropReason', fullReason); // Append the full reason to formdata
+      } else {
+        formdata.append('dropReason', lose); // Append the reason as is
+      }
       isPayloadEmpty = false;
     }
 
@@ -940,15 +965,26 @@ const StageCard = (props: Props) => {
                     value={'Chose another hospital - Which Hospital'}
                   >
                     Chose another hospital - Which Hospital ?
-                    <TextField
-                      id="hospitalName"
-                      value={hospitalName}
-                      onChange={handleHospitalNameChange}
-                      variant="standard"
-                      sx={{ marginLeft: 2 }}
-                    />
                   </MenuItem>
                 </Select>
+                {lose === 'Chose another hospital - Which Hospital' && (
+                  <TextField
+                    id="hospitalName"
+                    label="Enter hospital name"
+                    value={hospitalName}
+                    onChange={handleHospitalNameChange}
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      mt: 2,
+                      fontSize: '14px',
+                      color: '#080F1A',
+                      fontFamily: `"Outfit",sans-serif`
+                    }}
+                    InputLabelProps={fieldCss}
+                    InputProps={fieldInputCss}
+                  />
+                )}
               </FormControl>
             </Box>
 

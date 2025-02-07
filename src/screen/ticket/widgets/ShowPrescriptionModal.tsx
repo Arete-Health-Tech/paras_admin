@@ -6,8 +6,8 @@ import Typography from '@mui/material/Typography';
 import { Drawer, Stack } from '@mui/material';
 import { DownloadOutlined } from '@mui/icons-material';
 import FileSaver from 'file-saver';
-import "../singleTicket.css";
-import DocumentDownload from "../../../assets/document-download.svg"
+import '../singleTicket.css';
+import DocumentDownload from '../../../assets/document-download.svg';
 
 interface Props {
   image: string;
@@ -25,17 +25,18 @@ const ShowPrescription = ({ image, image1 }: Props) => {
 
   const downloadPrescription = () => {
     FileSaver.saveAs(image, 'prescription_img.jpg');
+  };
+  const downloadPrescription2 = () => {
     FileSaver.saveAs(image1, 'prescription_img.jpg');
   };
-
-
-
 
   const [isHovering, setIsHovering] = useState(false);
   const [bgPos, setBgPos] = useState('0% 0%');
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+  const handleMouseMove = (
+    event: React.MouseEvent<HTMLImageElement, MouseEvent>
+  ) => {
     if (!resultRef.current) return;
     const img = event.currentTarget;
     const rect = img.getBoundingClientRect();
@@ -53,14 +54,13 @@ const ShowPrescription = ({ image, image1 }: Props) => {
     setIsHovering(false);
   };
 
-
-
-
   const [isHovering1, setIsHovering1] = useState(false);
   const [bgPos1, setBgPos1] = useState('0% 0%');
   const resultRef1 = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove1 = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+  const handleMouseMove1 = (
+    event: React.MouseEvent<HTMLImageElement, MouseEvent>
+  ) => {
     if (!resultRef.current) return;
     const img = event.currentTarget;
     const rect = img.getBoundingClientRect();
@@ -93,7 +93,9 @@ const ShowPrescription = ({ image, image1 }: Props) => {
 
   return (
     <div>
-      <Stack className="prescription-link" onClick={handleOpen}>View Prescription</Stack>
+      <Stack className="prescription-link" onClick={handleOpen}>
+        View Prescription
+      </Stack>
       <Drawer
         sx={{
           position: 'relative',
@@ -101,8 +103,8 @@ const ShowPrescription = ({ image, image1 }: Props) => {
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,
-            borderTopLeftRadius: "15px",
-            borderBottomLeftRadius: "15px"
+            borderTopLeftRadius: '15px',
+            borderBottomLeftRadius: '15px'
           }
         }}
         anchor="right"
@@ -120,7 +122,7 @@ const ShowPrescription = ({ image, image1 }: Props) => {
           p={1}
           borderColor="#f5f5f5"
         >
-          <Stack className='viewprescription-heading'>View Prescription</Stack>
+          <Stack className="viewprescription-heading">View Prescription</Stack>
           {/* <Button
             onClick={downloadPrescription}
             sx={{ textTransform: 'capitalize' }}
@@ -129,17 +131,55 @@ const ShowPrescription = ({ image, image1 }: Props) => {
           >
             Download Prescription
           </Button> */}
-          <Stack className='Download-Icon'
-            onClick={downloadPrescription}
-          ><img src={DocumentDownload} /></Stack>
-        </Box>
-        <Box style={{
-          display: 'flex',
-          borderRadius: "20px",
-          justifyContent: image1 ? 'space-around' : 'end',
-          marginRight: image1 ? 0 : 10,
+          <Stack sx={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+            <Stack sx={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+              {' '}
+              <Stack
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                Image 1
+              </Stack>{' '}
+              <Stack className="Download-Icon" onClick={downloadPrescription}>
+                <img src={DocumentDownload} />
+              </Stack>
+            </Stack>
 
-        }}>
+            {image1 && (
+              <Stack
+                sx={{ display: 'flex', flexDirection: 'row', gap: '10px' }}
+              >
+                {' '}
+                <Stack
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  Image 2
+                </Stack>{' '}
+                <Stack
+                  className="Download-Icon"
+                  onClick={downloadPrescription2}
+                >
+                  <img src={DocumentDownload} />
+                </Stack>
+              </Stack>
+            )}
+          </Stack>
+        </Box>
+        <Box
+          style={{
+            display: 'flex',
+            borderRadius: '20px',
+            justifyContent: image1 ? 'space-around' : 'end',
+            marginRight: image1 ? 0 : 10
+          }}
+        >
           {/* {image ? (
             <img src={image} alt="Prescription" width="600vw" height="auto"
               style={{
@@ -165,7 +205,7 @@ const ShowPrescription = ({ image, image1 }: Props) => {
 
           {/* first image */}
 
-          {image1 ?
+          {image1 ? (
             <>
               <div className="img-zoom-container">
                 <img
@@ -201,7 +241,7 @@ const ShowPrescription = ({ image, image1 }: Props) => {
                 }}
               />
             </>
-            :
+          ) : (
             <>
               <div
                 ref={resultRef}
@@ -236,9 +276,8 @@ const ShowPrescription = ({ image, image1 }: Props) => {
                   }}
                 />
               </div>
-
             </>
-          }
+          )}
 
           {/* second image */}
           <div
@@ -259,21 +298,23 @@ const ShowPrescription = ({ image, image1 }: Props) => {
             }}
           />
           <div className="img-zoom-container">
-            {image1 && <img
-              src={image1} // Change to your actual image URL\
-              alt="Zoomable"
-              width="600"
-              height="90vh"
-              onMouseMove={handleMouseMove1}
-              onMouseEnter={handleMouseEnter1}
-              onMouseLeave={handleMouseLeave1}
-              style={{
-                width: '600px',
-                height: '90vh',
-                display: isHovering ? 'none' : 'block',
-                margin: 10
-              }}
-            />}
+            {image1 && (
+              <img
+                src={image1} // Change to your actual image URL\
+                alt="Zoomable"
+                width="600"
+                height="90vh"
+                onMouseMove={handleMouseMove1}
+                onMouseEnter={handleMouseEnter1}
+                onMouseLeave={handleMouseLeave1}
+                style={{
+                  width: '600px',
+                  height: '90vh',
+                  display: isHovering ? 'none' : 'block',
+                  margin: 10
+                }}
+              />
+            )}
           </div>
         </Box>
       </Drawer>

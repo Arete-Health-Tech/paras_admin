@@ -112,7 +112,8 @@ const customTheme = (outerTheme: Theme) =>
   });
 
 const AddCallRescheduler = () => {
-  const { setIsModalOpenCall, isModalOpenCall } = useTicketStore();
+  const { setIsModalOpenCall, isModalOpenCall, setDownloadDisable } =
+    useTicketStore();
   const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -162,6 +163,7 @@ const AddCallRescheduler = () => {
   }, [date, time, callReschedulerData.title.length]);
 
   const addCAllRescheduler = async () => {
+    setDownloadDisable(true);
     try {
       await createNewCallReschedulerHandler({
         ...callReschedulerData,
@@ -183,7 +185,9 @@ const AddCallRescheduler = () => {
       await getAllTaskCountHandler();
     } catch (error) {
       console.error('Error creating reminder:', error);
+      setDownloadDisable(false);
     }
+    setDownloadDisable(false);
   };
 
   const handleReasonToReschedule = (event) => {

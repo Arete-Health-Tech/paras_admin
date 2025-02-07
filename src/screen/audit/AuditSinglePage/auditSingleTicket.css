@@ -2,7 +2,6 @@
 
 /* Single Ticket Detail Component CSS */
 
-
 .task-bar {
   background-color: #ffffff;
   border-bottom-right-radius: 25px;
@@ -212,7 +211,7 @@
   align-items: center;
   flex-shrink: 0;
   color: #080f1a;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   margin-right: 5px;
 }
 
@@ -505,7 +504,6 @@
   flex-direction: column;
   transition: background-color 0.6s ease;
   padding: 10px 10px;
-
 }
 
 .accordion__section:hover {
@@ -521,7 +519,6 @@
   justify-content: space-between;
   border: none;
   outline: none;
-
 }
 
 .accordion__title {
@@ -757,7 +754,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 6.4px;
-  background: var(--Background-Bluish, #DAE8FF);
+  background: var(--Background-Bluish, #dae8ff);
 }
 
 .Uploaded-document {
@@ -1249,8 +1246,8 @@
 
 .avatar {
   position: relative;
-  width: "2vw";
-  height: "5.9vh";
+  width: '2vw';
+  height: '5.9vh';
 }
 
 .avatar2 {
@@ -1395,7 +1392,8 @@
 .KebabMenu-item {
   display: flex;
   width: 200px;
-  padding: var(--Spacing-16px, 16px) var(--Spacing-0px, 0px) var(--8px, 10px) var(--Spacing-0px, 0px);
+  padding: var(--Spacing-16px, 16px) var(--Spacing-0px, 0px) var(--8px, 10px)
+    var(--Spacing-0px, 0px);
   flex-direction: column;
   align-items: left;
   position: absolute;
@@ -1410,7 +1408,8 @@
   display: flex;
   width: 200px;
   /* height: 40%; */
-  padding: var(--Spacing-16px, 16px) var(--Spacing-0px, 0px) var(--8px, 10px) var(--Spacing-0px, 0px);
+  padding: var(--Spacing-16px, 16px) var(--Spacing-0px, 0px) var(--8px, 10px)
+    var(--Spacing-0px, 0px);
   flex-direction: column;
   align-items: left;
   position: absolute;
@@ -1469,12 +1468,10 @@
 
 @media (max-width: 1100px) {
   .steps ul li div {
-
     width: 8.7vw;
   }
 
   .steps ul li:first-child div {
-
     width: 7.2vw;
   }
 }
@@ -1651,7 +1648,7 @@
 }
 
 .task-pending {
-  color: var(--Primary-Default, #0566FF);
+  color: var(--Primary-Default, #0566ff);
   text-align: center;
   /* Body/Small */
   font-family: Outfit, sans-serif;
@@ -1664,7 +1661,6 @@
 }
 
 .ticket-card-notification {
-
   display: flex;
   width: 18px;
   height: 18px;
@@ -1673,8 +1669,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 20px;
-  background: var(--Alerts-Red, #F94839);
-  color: var(--Background-White, #FFF);
+  background: var(--Alerts-Red, #f94839);
+  color: var(--Background-White, #fff);
   text-align: center;
   font-family: Outfit, sans-serif;
   font-size: 10px;

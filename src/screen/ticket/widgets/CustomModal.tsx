@@ -517,6 +517,18 @@ const CustomModal = () => {
                       {' '}
                       Call Complete
                     </button>
+                    <button
+                      style={{
+                        backgroundColor: isButtonClicked('Wrong Number')
+                          ? '#DAE8FF'
+                          : '#F6F7F9'
+                      }}
+                      onClick={() => handleButtonClick('Wrong Number')}
+                      className="call-Button"
+                    >
+                      {' '}
+                      Wrong Number
+                    </button>
                   </Stack>
                 </Stack>
               </Stack>

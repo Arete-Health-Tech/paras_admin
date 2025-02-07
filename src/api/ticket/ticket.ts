@@ -22,7 +22,7 @@ export const getTicket = async (
   won?: any,
   lose?: any
 ) => {
-  setDownloadDisable(true);
+  // setDownloadDisable(true);
   const params = new URLSearchParams(selectedFilters).toString();
   // const timestamp = new Date().getTime();
   const { data } = await apiClient.get(
@@ -33,7 +33,7 @@ export const getTicket = async (
       'location'
     )}&specialtyforFilter=${filteredLocation}`
   );
-  setDownloadDisable(false);
+  // setDownloadDisable(false);
   return data;
 };
 export const getAllTicket = async () => {

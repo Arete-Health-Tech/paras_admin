@@ -144,7 +144,8 @@ const TicketFilter = (props: {
     isAuditorFilterOn,
     setIsAuditorFilterOn,
     setFilteredLocation,
-    filteredLocation
+    filteredLocation,
+    setDownloadDisable
   } = useTicketStore();
 
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
@@ -411,49 +412,53 @@ const TicketFilter = (props: {
   }, []);
 
   const handleApplyFilter = async () => {
-    // setTicketFilters({
-    //   stageList: selectedStageList,
-    //   admissionType: admissionType,
-    //   diagnosticType: diagnosticsType,
-    //   startDate: startDate ? dayjs(startDate).unix() * 1000 : NaN,
-    //   endDate: endDate ? dayjs(endDate).unix() * 1000 + 2000000 : NaN
-    // });
+    try {
+      setDownloadDisable(true);
 
-    setIsFilterOpen(false);
-    setPageNumber(1);
-    setFilterTickets(selectedFilters);
-    await getTicketHandler(UNDEFINED, 1, 'false', selectedFilters);
-    // console.log(isAmritsarUser, "selected again")
-    setFilterCount(
-      ticketFilterCount(
-        selectedFilters,
-        admissionType,
-        diagnosticsType,
-        dateRange,
-        statusType,
-        filteredLocation,
-        isPatnaUser,
-        isRanchiUser,
-        followUp
-      )
-    );
+      setIsFilterOpen(false);
+      setPageNumber(1);
+      setFilterTickets(selectedFilters);
 
-    props.setPage(1);
-    if (ticketID) {
-      await validateTicket(ticketID);
-      navigate(
-        `${
-          localStorage.getItem('ticketType') === 'Admission'
-            ? '/admission/'
-            : localStorage.getItem('ticketType') === 'Diagnostics'
-            ? '/diagnostics/'
-            : localStorage.getItem('ticketType') === 'Follow-Up'
-            ? '/follow-up/'
-            : '/ticket/'
-        }`
+      await getTicketHandler(UNDEFINED, 1, 'false', selectedFilters);
+
+      setFilterCount(
+        ticketFilterCount(
+          selectedFilters,
+          admissionType,
+          diagnosticsType,
+          dateRange,
+          statusType,
+          filteredLocation,
+          isPatnaUser,
+          isRanchiUser,
+          followUp
+        )
       );
+
+      props.setPage(1);
+
+      if (ticketID) {
+        await validateTicket(ticketID);
+        const ticketType = localStorage.getItem('ticketType');
+        const basePath =
+          ticketType === 'Admission'
+            ? '/admission/'
+            : ticketType === 'Diagnostics'
+            ? '/diagnostics/'
+            : ticketType === 'Follow-Up'
+            ? '/follow-up/'
+            : '/ticket/';
+
+        navigate(basePath);
+      }
+
+      console.log('Filter data:', selectedFilters);
+    } catch (error) {
+      console.error('Error in handleApplyFilter:', error);
+      setDownloadDisable(false);
+    } finally {
+      setDownloadDisable(false);
     }
-    console.log('filter dtata', selectedFilters);
   };
 
   const handleClearFilter = async () => {

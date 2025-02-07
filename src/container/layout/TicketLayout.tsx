@@ -160,6 +160,7 @@ const Ticket = () => {
     viewEstimates,
     allAuditCommentCount,
     setAllAuditCommentCount,
+    setDownloadDisable,
     downloadDisable
   } = useTicketStore();
   const { user } = useUserStore.getState();
@@ -279,6 +280,7 @@ const Ticket = () => {
   useEffect(() => {
     console.log(newFilter, 'newFilter');
     const data = async () => {
+      setDownloadDisable(true);
       setSearchName('');
       setSearchByName(UNDEFINED);
       setSearchError('Type to search & Enter');
@@ -287,6 +289,7 @@ const Ticket = () => {
       setPage(1);
       setPageNumber(1);
       await getTicketHandler(UNDEFINED, 1, 'false', newFilter);
+      setDownloadDisable(false);
     };
     data();
   }, [localStorage.getItem('location')]);
@@ -307,11 +310,12 @@ const Ticket = () => {
     console.log(e);
     if (e.key === 'Enter') {
       setTickets([]);
-
+      setDownloadDisable(true);
       if (searchName === '') {
         fetchTicketsOnEmpthySearch();
         setSearchError('Type to search & Enter');
         // redirectTicket();
+        setDownloadDisable(false);
         return;
       }
       await getTicketHandler(searchName, 1, 'false', newFilter);
@@ -319,6 +323,7 @@ const Ticket = () => {
       setSearchError(`remove "${searchName.toUpperCase()}" to reset & Enter`);
       setPageNumber(1);
       setPage(1);
+      setDownloadDisable(false);
       // redirectTicket();
     }
   };
@@ -392,6 +397,7 @@ const Ticket = () => {
   // window.onload = redirectTicket;
 
   useEffect(() => {
+    setDownloadDisable(true);
     (async function () {
       // await getTicketHandler(UNDEFINED, 1, 'false', newFilter);
       await getAllNotesWithoutTicketId();
@@ -413,6 +419,7 @@ const Ticket = () => {
     // setTickets(ticketCache[1]);
     setPage(1);
     setPageNumber(1);
+    setDownloadDisable(false);
   }, [localStorage.getItem('ticketType')]);
 
   // const isAlamredReminderExist = (reminder: iReminder) => {
@@ -828,6 +835,7 @@ const Ticket = () => {
   }, [ticketID]);
 
   const handleOnClose = async () => {
+    setDownloadDisable(true);
     if (ticketID) {
       // localStorage.getItem('ticketType') === 'Admission'
       //   ? await validateTicket(ticketID)
@@ -849,6 +857,7 @@ const Ticket = () => {
         navigate(NAVIGATE_TO_SWITCHVIEW_TICKET);
       }
     }
+    setDownloadDisable(false);
   };
 
   const [isAdminUser, setIsAdminUser] = useState(false);

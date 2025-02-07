@@ -212,7 +212,8 @@ const NSingleTicketDetails = (props: Props) => {
     estimates,
     isSwitchView,
     setIsSwitchView,
-    allWhtsappCount
+    allWhtsappCount,
+    setDownloadDisable
   } = useTicketStore();
   const { doctors, departments, stages } = useServiceStore();
   const { user } = useUserStore();
@@ -320,49 +321,32 @@ const NSingleTicketDetails = (props: Props) => {
   };
 
   const handelUploadType = async () => {
-    setDisableButton(true);
-    const validationCheck = validation();
-    if (validationCheck === true) {
+    try {
+      setDownloadDisable(true);
+      setDisableButton(true);
+      const validationCheck = validation();
+
+      if (!validationCheck) {
+        setDisableButton(false);
+        return;
+      }
+
       const payload = {
         admission: prescription.admission,
         service: prescription?.service?._id
       };
-      try {
-        const ticketId = ticketID;
-        const respose = await updateService(
-          {
-            admission: prescription.admission,
-            service: prescription?.service?._id
-          },
-          ticketId
-        );
-        setDisableButton(false);
-        setAmissionTypeClicked(true);
-        getTicketHandler(UNDEFINED, pageNumber, 'false', newFilter);
-      } catch (error) {
-        setDisableButton(false);
-        setAmissionTypeClicked(true);
-        getTicketHandler(UNDEFINED, pageNumber, 'false', newFilter);
-        console.error('Error occurred:', error);
-      }
 
-      // const url = ticketID !== undefined ? `/ticket/${ticketID}` : `/ticket`;
-      // window.location.href = url;
-      // window.location.reload();
-      // const ticket: any = structuredClone(prescription);
-      // delete ticket.department;
-      // delete ticket.subDepartment;
-      // ticket.departments = [prescription.department];
+      const ticketId = ticketID;
+      await updateService(payload, ticketId);
 
-      // ticket.followup = ticket.followup ? ticket.followup : null;
-      // // await createTicketHandler(ticket);
-      // setPrescription(structuredClone(initialPrescription));
-      // // setDiagnostics([]);
-      // setDisableButton(false);
-
-      // // navigate('/');
-    } else {
+      setAmissionTypeClicked(true);
+      await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
+    } catch (error) {
+      console.error('Error in handelUploadType:', error);
+      setDownloadDisable(false);
+    } finally {
       setDisableButton(false);
+      setDownloadDisable(false);
     }
   };
 
@@ -795,9 +779,10 @@ const NSingleTicketDetails = (props: Props) => {
   }, []);
 
   const handleProbability = async (value) => {
+    setDownloadDisable(true);
     await updateTicketProbability(value, ticketID);
     setProbabilityModal(false);
-    await getTicketHandler(UNDEFINED, pageNumber, 'false', newFilter);
+    await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
     if (isSwitchView) {
       navigate(`/switchView/${ticketID}`);
     } else {
@@ -813,13 +798,15 @@ const NSingleTicketDetails = (props: Props) => {
         }${ticketID}`
       );
     }
+    setDownloadDisable(false);
   };
 
   // This function is for calling the api of delete lead
   const handleLeadDelete = async () => {
+    setDownloadDisable(true);
     setDeleteModal(false);
     await deleteTicket(ticketID);
-    getTicketHandler(UNDEFINED, pageNumber, 'false', newFilter);
+    getTicketHandler(searchByName, pageNumber, 'false', newFilter);
     await validateTicket(ticketID);
     if (!isSwitchView) {
       navigate(
@@ -834,47 +821,66 @@ const NSingleTicketDetails = (props: Props) => {
         }`
       );
     }
+    setDownloadDisable(false);
   };
 
   //This function is for assigne ticket to different representative
   const handleAddAssigne = async (assigneeId: string) => {
-    const res = await assignedToTicket(ticketID, assigneeId);
-    getTicketHandler(UNDEFINED, pageNumber, 'false', newFilter);
-    if (isSwitchView) {
-      navigate(`/switchView/${ticketID}`);
-    } else {
-      navigate(
-        `${
-          localStorage.getItem('ticketType') === 'Admission'
+    try {
+      setDownloadDisable(true);
+      const res = await assignedToTicket(ticketID, assigneeId);
+      await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
+
+      if (isSwitchView) {
+        navigate(`/switchView/${ticketID}`);
+      } else {
+        const ticketType = localStorage.getItem('ticketType');
+        const basePath =
+          ticketType === 'Admission'
             ? '/admission/'
-            : localStorage.getItem('ticketType') === 'Diagnostics'
+            : ticketType === 'Diagnostics'
             ? '/diagnostics/'
-            : localStorage.getItem('ticketType') === 'Follow-Up'
+            : ticketType === 'Follow-Up'
             ? '/follow-up/'
-            : '/ticket/'
-        }${ticketID}`
-      );
+            : '/ticket/';
+
+        navigate(`${basePath}${ticketID}`);
+      }
+    } catch (error) {
+      console.error('Error in handleAddAssigne:', error);
+      setDownloadDisable(false);
+    } finally {
+      setDownloadDisable(false);
     }
   };
 
   //This function is for remove assigne ticket from the representative
   const handleRemoveAssigne = async (assigneeId: string) => {
-    const res = await removeFromTicket(ticketID, assigneeId);
-    getTicketHandler(UNDEFINED, pageNumber, 'false', newFilter);
-    if (isSwitchView) {
-      navigate(`/switchView/${ticketID}`);
-    } else {
-      navigate(
-        `${
-          localStorage.getItem('ticketType') === 'Admission'
+    try {
+      setDownloadDisable(true);
+      const res = await removeFromTicket(ticketID, assigneeId);
+      await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
+
+      if (isSwitchView) {
+        navigate(`/switchView/${ticketID}`);
+      } else {
+        const ticketType = localStorage.getItem('ticketType');
+        const basePath =
+          ticketType === 'Admission'
             ? '/admission/'
-            : localStorage.getItem('ticketType') === 'Diagnostics'
+            : ticketType === 'Diagnostics'
             ? '/diagnostics/'
-            : localStorage.getItem('ticketType') === 'Follow-Up'
+            : ticketType === 'Follow-Up'
             ? '/follow-up/'
-            : '/ticket/'
-        }${ticketID}`
-      );
+            : '/ticket/';
+
+        navigate(`${basePath}${ticketID}`);
+      }
+    } catch (error) {
+      console.error('Error in handleRemoveAssigne:', error);
+      setDownloadDisable(false);
+    } finally {
+      setDownloadDisable(false);
     }
   };
 
@@ -1328,15 +1334,14 @@ const NSingleTicketDetails = (props: Props) => {
                 {/* <MenuItem sx={menuItemStyles} onClick={handleKebabClose}>
                                     Set Priority
                                 </MenuItem> */}
-                {currentTicket?.prescription[0]?.admission !== null ||
-                  (currentTicket?.prescription[0]?.admission !== '' && (
-                    <MenuItem
-                      sx={menuItemStyles}
-                      onClick={() => setAmissionTypeClicked(false)}
-                    >
-                      Add Surgery
-                    </MenuItem>
-                  ))}
+
+                <MenuItem
+                  sx={menuItemStyles}
+                  onClick={() => setAmissionTypeClicked(false)}
+                >
+                  Add Surgery
+                </MenuItem>
+
                 {/* <MenuItem sx={menuItemStyles} onClick={handleKebabClose}>
                                     Initate RFA
                                 </MenuItem> */}
