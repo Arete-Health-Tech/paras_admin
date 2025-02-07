@@ -434,6 +434,7 @@ const StageCard = (props: Props) => {
     setLose('');
     setDisableLostButton(true);
     setOpenLose(false);
+    setHospitalName('');
   };
 
   const handleChangeLose = (event) => {
