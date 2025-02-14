@@ -1146,6 +1146,7 @@ const Ticket = () => {
                   }}
                   onClick={() => {
                     setIsSwitchView(!isSwitchView);
+                    setPageNumber(1);
                     navigate('/switchView');
                   }}
                 >

@@ -702,6 +702,7 @@ function SwitchViewTable() {
               }}
               onClick={() => {
                 backToDashboard();
+                setPageNumber(1);
                 setIsSwitchView(false);
               }}
             >

@@ -8,6 +8,7 @@ import { uploadDocFile, uploadEmrFile } from '../../api/ticket/ticket';
 import { fontSize } from 'pdfkit';
 // import { CSVLink, CSVDownload } from "react-csv";
 import Papa from 'papaparse';
+import useTicketStore from '../../store/ticketStore';
 
 const inputStyle = {
   cursor: 'pointer',
@@ -32,6 +33,7 @@ interface CsvRecord {
 }
 
 const FileUpload = () => {
+  const { setPageNumber } = useTicketStore();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<String>('');
   const [uploading, setUploading] = useState<boolean>(false);
@@ -231,7 +233,10 @@ const FileUpload = () => {
             <Box style={{ marginTop: '-3%', cursor: 'pointer' }}>
               <Typography
                 onClick={() => (
-                  setOpen(false), setSelectedFile(''), navigate('/')
+                  setOpen(false),
+                  setSelectedFile(''),
+                  navigate('/'),
+                  setPageNumber(1)
                 )}
               >
                 <ClearIcon />
