@@ -203,7 +203,7 @@ const TicketFilter = (props: {
           setFilteredLocation('patna');
         } else if (ranchiFound) {
           SetIsRanchiUser(true);
-          setFilteredLocation('ranchi');
+          setFilteredLocation('Ranchi');
         } else {
           setIsAdminUser(true);
           SetIsPatnaUser(false);
@@ -502,7 +502,7 @@ const TicketFilter = (props: {
     if (isPatnaUser) {
       setFilteredLocation('patna');
     } else if (isRanchiUser) {
-      setFilteredLocation('ranchi');
+      setFilteredLocation('Ranchi');
     } else {
       setFilteredLocation('');
     }
