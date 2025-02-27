@@ -445,18 +445,19 @@ export const getAllTicketAdmission = async ( value: any, location: any ) =>
   console.log(location, 'location');
   if (!location) {
     const { data } = await apiClient.get(
-      `/ticket/allDownload?month=${value.format('YYYY-MM')}`
+      `/ticket/getTicketsWithinDateRange?month=${value.format('YYYY-MM')}`
     );
     return data;
   } else {
     const { data } = await apiClient.get(
-      `/ticket/allDownload?month=${value.format(
+      `/ticket/getTicketsWithinDateRange?month=${value.format(
         'YYYY-MM'
-      )}&location=${location}`
+      )}&&id=${location}`
     );
     return data;
   }
 };
+
 export const getAllDownloadTicketDiagontics = async (
   value: any,
   location: any
