@@ -440,13 +440,22 @@ export const getAuditorCommentCount = async () => {
 export const createNoteActivity = async (notesData) => {
   await apiClient.post('/activity/getNotes', notesData);
 };
-export const getAllTicketAdmission = async (value: any, location: any) => {
-  const { data } = await apiClient.get(
-    `/ticket/getTicketsWithinDateRange?month=${value.format(
-      'YYYY-MM'
-    )}&&id=${location}`
-  );
-  return data;
+export const getAllTicketAdmission = async ( value: any, location: any ) =>
+{
+  console.log(location, 'location');
+  if (!location) {
+    const { data } = await apiClient.get(
+      `/ticket/allDownload?month=${value.format('YYYY-MM')}`
+    );
+    return data;
+  } else {
+    const { data } = await apiClient.get(
+      `/ticket/allDownload?month=${value.format(
+        'YYYY-MM'
+      )}&location=${location}`
+    );
+    return data;
+  }
 };
 export const getAllDownloadTicketDiagontics = async (
   value: any,
