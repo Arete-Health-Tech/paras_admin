@@ -1,6 +1,7 @@
 import { Roles } from '../../constants/types';
 
 export interface iUser {
+  Unit: ObjectId;
   _id: ObjectId;
   firstName: string;
   lastName: string;

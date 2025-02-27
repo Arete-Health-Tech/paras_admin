@@ -36,20 +36,20 @@ export const getTicket = async (
   // setDownloadDisable(false);
   return data;
 };
-export const getAllTicket = async () => {
-  const { data } = await apiClient.get(`/ticket/getTicketsWithinDateRange`);
-  return data;
-};
-export const getAllTicketDiagontics = async () => {
-  const { data } = await apiClient.get(
-    `/ticket/getAllDownloadTicketDiagnostics`
-  );
-  return data;
-};
-export const getAllTicketFollowUp = async () => {
-  const { data } = await apiClient.get(`/ticket/getAllDownloadTicketFolllow`);
-  return data;
-};
+// export const getAllTicket = async () => {
+//   const { data } = await apiClient.get(`/ticket/getTicketsWithinDateRange`);
+//   return data;
+// };
+// export const getAllTicketDiagontics = async () => {
+//   const { data } = await apiClient.get(
+//     `/ticket/getAllDownloadTicketDiagnostics`
+//   );
+//   return data;
+// };
+// export const getAllTicketFollowUp = async () => {
+//   const { data } = await apiClient.get(`/ticket/getAllDownloadTicketFolllow`);
+//   return data;
+// };
 
 export const getticketRescedulerAbove = async (ticketId?: string | null) => {
   // const timestamp = new Date().getTime();
@@ -184,7 +184,7 @@ export const getAllNotesByTicketId = async (ticketId: string) => {
 export const createNewNote = async (note: iNote, disposition: string) => {
   const { data } = await apiClient.post('/ticket/note', {
     ...note,
-    'disposition': disposition
+    disposition: disposition
   });
   return data;
 };
@@ -438,5 +438,49 @@ export const getAuditorCommentCount = async () => {
   return data;
 };
 export const createNoteActivity = async (notesData) => {
-  await apiClient.post( '/activity/getNotes', notesData );
+  await apiClient.post('/activity/getNotes', notesData);
+};
+export const getAllTicketAdmission = async (value: any, location: any) => {
+  const { data } = await apiClient.get(
+    `/ticket/getTicketsWithinDateRange?month=${value.format(
+      'YYYY-MM'
+    )}&&id=${location}`
+  );
+  return data;
+};
+export const getAllDownloadTicketDiagontics = async (
+  value: any,
+  location: any
+) => {
+  if (location == 'All') {
+    const { data } = await apiClient.get(
+      `/ticket/getAllDownloadTicketDiagnostics?month=${value.format('YYYY-MM')}`
+    );
+    return data;
+  } else {
+    const { data } = await apiClient.get(
+      `/ticket/getAllDownloadTicketDiagnostics?month=${value.format(
+        'YYYY-MM'
+      )}&location=${location}`
+    );
+    return data;
+  }
+};
+export const getAllDownloadTicketFollowUp = async (
+  value: any,
+  location: any
+) => {
+  if (location == 'All') {
+    const { data } = await apiClient.get(
+      `/followUp/followupdownload?month=${value.format('YYYY-MM')}`
+    );
+    return data;
+  } else {
+    const { data } = await apiClient.get(
+      `/followUp/followupdownload?month=${value.format(
+        'YYYY-MM'
+      )}&location=${location}`
+    );
+    return data;
+  }
 };

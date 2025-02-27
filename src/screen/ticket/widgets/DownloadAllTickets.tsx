@@ -1,14 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DownloadForOfflineOutlined, Payment } from '@mui/icons-material';
 import {
   Box,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Popover,
+  Select,
+  SelectChangeEvent,
   Stack,
   Tooltip,
   TooltipProps,
   styled,
   tooltipClasses
 } from '@mui/material';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { getDepartmentsHandler } from '../../../api/department/departmentHandler';
 import { getDoctorsHandler } from '../../../api/doctor/doctorHandler';
@@ -23,14 +30,27 @@ import useReprentativeStore from '../../../store/representative';
 import DownloadAllFileIcon from '../../../../src/assets/DownloadAllFiles.svg';
 import { apiClient } from '../../../api/apiClient';
 import {
-  getAllTicket,
-  getAllTicketDiagontics,
-  getAllTicketFollowUp
+  getAllDownloadTicketDiagontics,
+  getAllDownloadTicketFollowUp,
+  getAllTicketAdmission,
 } from '../../../api/ticket/ticket';
 import { toast } from 'react-toastify';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import useUserStore from '../../../store/userStore';
 
 type Props = {};
-
+const materilaFieldCss = {
+  fontSize: '14px',
+  color: '#080F1A',
+  fontFamily: `"Outfit",sans-serif`
+};
+const materilaInputFieldCss = {
+  fontSize: '14px',
+  color: '#080F1A',
+  fontFamily: `"Outfit",sans-serif`
+};
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -47,8 +67,11 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 const DownloadAllTickets = (props: Props) => {
   const { doctors, departments, stages, allNotes } = useServiceStore();
+  const { user } = useUserStore.getState();
 
+  const [errors, setErrors] = useState({ date: false });
   const { representative } = useReprentativeStore();
+  console.log({ user });
   const {
     filterTickets,
     filterTicketsDiago,
@@ -124,20 +147,64 @@ const DownloadAllTickets = (props: Props) => {
     return dayjs(date).format('DD/MMM/YYYY');
   };
 
-  const downloadData = async () => {
-    setDownloadDisable(true);
-    try {
-      const sortedTickets =
-        localStorage.getItem('ticketType') === 'Admission'
-          ? await getAllTicket()
-          : localStorage.getItem('ticketType') === 'Diagnostics'
-          ? await getAllTicketDiagontics()
-          : localStorage.getItem('ticketType') === 'Follow-Up'
-          ? await getAllTicketFollowUp()
-          : await getAllTicket();
+  // From here this is used for select download the data with the date
 
-      await getDoctorsHandler();
-      await getDepartmentsHandler();
+  useEffect(() => {
+    setAnchorEl(null);
+  }, [localStorage.getItem('ticketType')]);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  const handleDateChange = (newDate: Dayjs | null) => {
+    setSelectedDate(newDate);
+    if (newDate) {
+      console.log(newDate.format('YYYY-MM')); // Print selected date
+      setErrors((prev) => ({ ...prev, date: false }));
+    }
+  };
+
+  const downloadData = async () => {
+    if (!selectedDate) {
+      setErrors({
+        date: !selectedDate
+      });
+      return;
+    }
+
+    try {
+      setDownloadDisable(true);
+      
+      const ticketType = localStorage.getItem('ticketType');
+      let sortedTickets = [];
+
+      if (ticketType === 'Admission') {
+        sortedTickets = await getAllTicketAdmission(selectedDate, user?.Unit);
+      } else if (ticketType === 'Diagnostics') {
+        sortedTickets = await getAllDownloadTicketDiagontics(
+          selectedDate,
+          user?.Unit
+        );
+      } else if (ticketType === 'Follow-Up') {
+        sortedTickets = await getAllDownloadTicketFollowUp(
+          selectedDate,
+          user?.Unit
+        );
+      } else {
+        sortedTickets = await getAllTicketAdmission(selectedDate, user?.Unit);
+      }
+
+      await Promise.all([getDoctorsHandler(), getDepartmentsHandler()]);
 
       const data = sortedTickets?.map((ticket: any, index: number) => {
         return {
@@ -306,22 +373,78 @@ const DownloadAllTickets = (props: Props) => {
 
   return (
     <Box p={1} px={2}>
-      <LightTooltip
+      {/* <LightTooltip
         title={!downloadDisable ? 'Download All Data' : 'Downloading....'}
-      >
-        <Stack
-          style={{
-            width: '15.667px',
-            height: '15.397px',
-            // backgroundColor: !disable ? "none" : "grey",
-            borderRadius: '12px'
-          }}
+      > */}
+      <Stack style={{ borderRadius: '12px' }}>
+        {/* Button to open dropdown */}
+        <button
+          onClick={handleClick}
+          style={{ border: 'none', background: 'transparent', width: '20px' }}
         >
-          <button disabled={downloadDisable} onClick={downloadData}>
-            <img src={DownloadAllFileIcon} alt="Download All Data" />
-          </button>
-        </Stack>
-      </LightTooltip>
+          <img src={DownloadAllFileIcon} alt="Download All Data" />
+        </button>
+
+        {/* Popover dropdown for DatePicker */}
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+          }}
+          sx={{ borderRadius: '24px' }}
+        >
+          <Box
+            display={'flex'}
+            width={'250px'}
+            flexDirection={'column'}
+            gap={'15px'}
+            sx={{
+              padding: '30px 20px',
+              borderRadius: '16px'
+            }}
+          >
+            <Stack>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  slotProps={{ textField: { size: 'small' } }}
+                  label={'MM/YYYY'}
+                  views={['month', 'year']}
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                />
+              </LocalizationProvider>
+              {errors.date && (
+                <Stack sx={{ fontSize: '12px', color: 'red' }}>
+                  Please select a Month.
+                </Stack>
+              )}
+            </Stack>
+            <Stack
+              style={{
+                padding: '8px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontFamily: 'outFit,san-serif',
+                fontSize: '14px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                color: '#0566FF',
+                border: '1.5px solid #0566FF',
+                borderRadius: '4px'
+              }}
+              onClick={downloadData}
+            >
+              Download
+              {/* <img src={DownloadAllFileIcon} alt="Download All Data" /> */}
+            </Stack>
+          </Box>
+        </Popover>
+      </Stack>
+      {/* </LightTooltip> */}
     </Box>
   );
 };
