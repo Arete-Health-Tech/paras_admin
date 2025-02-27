@@ -32,7 +32,7 @@ import { apiClient } from '../../../api/apiClient';
 import {
   getAllDownloadTicketDiagontics,
   getAllDownloadTicketFollowUp,
-  getAllTicketAdmission,
+  getAllTicketAdmission
 } from '../../../api/ticket/ticket';
 import { toast } from 'react-toastify';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -69,7 +69,7 @@ const DownloadAllTickets = (props: Props) => {
   const { doctors, departments, stages, allNotes } = useServiceStore();
   const { user } = useUserStore.getState();
 
-  const [errors, setErrors] = useState({ date: false });
+  const [errors, setErrors] = useState({ unit: false, date: false });
   const { representative } = useReprentativeStore();
   console.log({ user });
   const {
@@ -177,33 +177,64 @@ const DownloadAllTickets = (props: Props) => {
   const downloadData = async () => {
     if (!selectedDate) {
       setErrors({
-        date: !selectedDate
+        date: !selectedDate,
+        unit: !selectedUnit
       });
       return;
     }
 
     try {
       setDownloadDisable(true);
-      
+
       const ticketType = localStorage.getItem('ticketType');
       let sortedTickets = [];
-
-      if (ticketType === 'Admission') {
-        sortedTickets = await getAllTicketAdmission(selectedDate, user?.Unit);
-      } else if (ticketType === 'Diagnostics') {
-        sortedTickets = await getAllDownloadTicketDiagontics(
-          selectedDate,
-          user?.Unit
-        );
-      } else if (ticketType === 'Follow-Up') {
-        sortedTickets = await getAllDownloadTicketFollowUp(
-          selectedDate,
-          user?.Unit
-        );
-      } else {
-        sortedTickets = await getAllTicketAdmission(selectedDate, user?.Unit);
+      if (selectedUnit == 'All') {
+        if (ticketType === 'Admission') {
+          sortedTickets = await getAllTicketAdmission(selectedDate, user?.Unit);
+        } else if (ticketType === 'Diagnostics') {
+          sortedTickets = await getAllDownloadTicketDiagontics(
+            selectedDate,
+            user?.Unit
+          );
+        } else if (ticketType === 'Follow-Up') {
+          sortedTickets = await getAllDownloadTicketFollowUp(
+            selectedDate,
+            user?.Unit
+          );
+        } else {
+          sortedTickets = await getAllTicketAdmission(selectedDate, user?.Unit);
+        }
+      } else if (selectedUnit == 'Ranchi') {
+        const ranchiId = '66f7bdca783f9aaba1099ce4';
+        if (ticketType === 'Admission') {
+          sortedTickets = await getAllTicketAdmission(selectedDate, ranchiId);
+        } else if (ticketType === 'Diagnostics') {
+          sortedTickets = await getAllDownloadTicketDiagontics(
+            selectedDate,
+            ranchiId
+          );
+        } else if (ticketType === 'Follow-Up') {
+          sortedTickets = await getAllDownloadTicketFollowUp(
+            selectedDate,
+            ranchiId
+          );
+        }
+      } else if (selectedUnit == 'Patna') {
+        const patnaId = '66fa9666589c46100af402c9';
+        if (ticketType === 'Admission') {
+          sortedTickets = await getAllTicketAdmission(selectedDate, patnaId);
+        } else if (ticketType === 'Diagnostics') {
+          sortedTickets = await getAllDownloadTicketDiagontics(
+            selectedDate,
+            patnaId
+          );
+        } else if (ticketType === 'Follow-Up') {
+          sortedTickets = await getAllDownloadTicketFollowUp(
+            selectedDate,
+            patnaId
+          );
+        }
       }
-
       await Promise.all([getDoctorsHandler(), getDepartmentsHandler()]);
 
       const data = sortedTickets?.map((ticket: any, index: number) => {
@@ -370,7 +401,12 @@ const DownloadAllTickets = (props: Props) => {
     }
     setDownloadDisable(false);
   };
+  const [selectedUnit, setSelectedUnit] = useState<string>('');
 
+  const handleUnitChange = (event: SelectChangeEvent<string>) => {
+    setSelectedUnit(event.target.value);
+    setErrors((prev) => ({ ...prev, unit: false })); // Clear error on selection
+  };
   return (
     <Box p={1} px={2}>
       {/* <LightTooltip
@@ -406,6 +442,36 @@ const DownloadAllTickets = (props: Props) => {
               borderRadius: '16px'
             }}
           >
+            {user?.role == 'ADMIN' && user?.Unit == null && (
+              <FormControl fullWidth size="small">
+                <InputLabel id="unit-select-label" sx={materilaFieldCss}>
+                  Select Unit
+                </InputLabel>
+                <Select
+                  labelId="unit-select-label"
+                  id="unit-select"
+                  value={selectedUnit}
+                  label="Select Unit"
+                  sx={materilaInputFieldCss}
+                  onChange={handleUnitChange}
+                >
+                  <MenuItem value="All" sx={materilaInputFieldCss}>
+                    All
+                  </MenuItem>
+                  <MenuItem value="Ranchi" sx={materilaInputFieldCss}>
+                    Ranchi
+                  </MenuItem>
+                  <MenuItem value="Patna" sx={materilaInputFieldCss}>
+                    Patna
+                  </MenuItem>
+                </Select>
+                {errors.unit && (
+                  <Stack sx={{ fontSize: '12px', color: 'red' }}>
+                    Please select a unit.
+                  </Stack>
+                )}
+              </FormControl>
+            )}
             <Stack>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
