@@ -1054,90 +1054,94 @@ const Ticket = () => {
                 Tickets
               </Stack>
               <Stack display={'flex'} flexDirection={'row'}>
-                <Stack>
-                  <Box
-                    height="100%"
-                    sx={{
-                      borderRadius: 'var(--36px, 36px)',
-                      border: '1px solid var(--Borders-Light-Grey, #d4dbe5)',
-                      background: 'var(--Background-White, #FFF)',
-                      cursor: 'pointer'
-                    }}
-                    className="Box_location"
-                    onClick={() => setVisible(!visible)}
-                  >
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      marginTop="3px"
-                      paddingLeft="1rem"
-                      paddingRight={isAdminUser ? '0rem' : '0.8rem'}
+                {user?.role == 'ADMIN' && (
+                  <Stack>
+                    <Box
+                      height="100%"
+                      sx={{
+                        borderRadius: 'var(--36px, 36px)',
+                        border: '1px solid var(--Borders-Light-Grey, #d4dbe5)',
+                        background: 'var(--Background-White, #FFF)',
+                        cursor: 'pointer'
+                      }}
+                      className="Box_location"
+                      onClick={() => setVisible(!visible)}
                     >
-                      <Stack sx={{ textTransform: 'capitalize' }}>
-                        {localStorage.getItem('location') == ''
-                          ? 'All'
-                          : localStorage.getItem('location')}
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        marginTop="3px"
+                        paddingLeft="1rem"
+                        paddingRight={isAdminUser ? '0rem' : '0.8rem'}
+                      >
+                        <Stack sx={{ textTransform: 'capitalize' }}>
+                          {localStorage.getItem('location') == ''
+                            ? 'All'
+                            : localStorage.getItem('location')}
+                        </Stack>
+                        {isAdminUser ? (
+                          <span>
+                            <img src={DropDownArrow} alt="" />
+                          </span>
+                        ) : (
+                          <></>
+                        )}
                       </Stack>
                       {isAdminUser ? (
-                        <span>
-                          <img src={DropDownArrow} alt="" />
-                        </span>
+                        <Stack
+                          ref={visibleRef}
+                          display={visible ? 'block' : 'none'}
+                          className="ticket-assigneemenu1"
+                          bgcolor="white"
+                          position="absolute"
+                          zIndex="1"
+                          boxShadow="0px 0px 10px rgba(0,0,0,0.1)"
+                        >
+                          <Stack className="ticket-asssignee-container-layout">
+                            <MenuItem
+                              sx={menuItemStyles}
+                              onClick={() => (
+                                setVisible(false),
+                                localStorage.setItem('location', ''),
+                                handleOnClose()
+                              )}
+                            >
+                              All
+                            </MenuItem>
+
+                            <MenuItem
+                              sx={menuItemStyles}
+                              onClick={() => (
+                                setVisible(false),
+                                localStorage.setItem('location', 'patna'),
+                                handleOnClose()
+                              )}
+                            >
+                              Patna
+                            </MenuItem>
+                            <MenuItem
+                              sx={menuItemStyles}
+                              onClick={() => (
+                                setVisible(false),
+                                localStorage.setItem('location', 'ranchi'),
+                                handleOnClose()
+                              )}
+                            >
+                              Ranchi
+                            </MenuItem>
+                          </Stack>
+                        </Stack>
                       ) : (
                         <></>
                       )}
-                    </Stack>
-                    {isAdminUser ? (
-                      <Stack
-                        ref={visibleRef}
-                        display={visible ? 'block' : 'none'}
-                        className="ticket-assigneemenu1"
-                        bgcolor="white"
-                        position="absolute"
-                        zIndex="1"
-                        boxShadow="0px 0px 10px rgba(0,0,0,0.1)"
-                      >
-                        <Stack className="ticket-asssignee-container-layout">
-                          <MenuItem
-                            sx={menuItemStyles}
-                            onClick={() => (
-                              setVisible(false),
-                              localStorage.setItem('location', ''),
-                              handleOnClose()
-                            )}
-                          >
-                            All
-                          </MenuItem>
-
-                          <MenuItem
-                            sx={menuItemStyles}
-                            onClick={() => (
-                              setVisible(false),
-                              localStorage.setItem('location', 'patna'),
-                              handleOnClose()
-                            )}
-                          >
-                            Patna
-                          </MenuItem>
-                          <MenuItem
-                            sx={menuItemStyles}
-                            onClick={() => (
-                              setVisible(false),
-                              localStorage.setItem('location', 'ranchi'),
-                              handleOnClose()
-                            )}
-                          >
-                            Ranchi
-                          </MenuItem>
-                        </Stack>
-                      </Stack>
-                    ) : (
-                      <></>
-                    )}
-                  </Box>
-                </Stack>
-                <Stack>
-                  <DownloadAllTickets />
-                </Stack>
+                    </Box>
+                  </Stack>
+                )}
+                {user?.role == 'ADMIN' && (
+                  <Stack>
+                    <DownloadAllTickets />
+                  </Stack>
+                )}
                 <Stack
                   sx={{
                     marginTop: '5px',

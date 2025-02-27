@@ -924,7 +924,7 @@ const TicketFilter = (props: {
               </ToggleButtonGroup>
             </Box>
           )}
-          {isAdminUser && (
+          {user?.role === 'ADMIN' && isAdminUser && (
             <Box p={1} px={3}>
               <Stack sx={{ fontFamily: 'Outfit,san-serif', fontWeight: '500' }}>
                 Location

@@ -32,6 +32,7 @@ interface patientData {
   uhid: string;
   firstName: string;
   lastName: string;
+  phone: string;
   age: string;
   gender: string;
   doctor: string;
@@ -40,6 +41,30 @@ interface patientData {
   followUp: string;
 }
 
+const CopyToClipboardIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M16 12.69V18.08C16 20.42 14.44 21.97 12.11 21.97H5.89C3.56 21.97 2 20.42 2 18.08V10.31C2 7.97004 3.56 6.42004 5.89 6.42004H9.72C10.75 6.42004 11.74 6.83004 12.47 7.56004L14.86 9.94004C15.59 10.67 16 11.66 16 12.69Z"
+      stroke="#292D32"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M22 8.24997V13.64C22 15.97 20.44 17.53 18.11 17.53H16V12.69C16 11.66 15.59 10.67 14.86 9.93997L12.47 7.55997C11.74 6.82997 10.75 6.41997 9.72 6.41997H8V5.85997C8 3.52997 9.56 1.96997 11.89 1.96997H15.72C16.75 1.96997 17.74 2.37997 18.47 3.10997L20.86 5.49997C21.59 6.22997 22 7.21997 22 8.24997Z"
+      stroke="#292D32"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
 const EditIcon = () => (
   <svg
     width="20"
@@ -106,6 +131,7 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
     uhid: '',
     firstName: '',
     lastName: '',
+    phone: '',
     age: '',
     gender: '',
     doctor: '',
@@ -152,6 +178,7 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
   };
   const patientData = [
     { id: 'uhid', label: 'UHID', value: `#${PatientData.uhid}` },
+    { id: 'phone', label: 'Phone No.', value: PatientData.phone },
     {
       id: 'Name',
       label: 'Name',
@@ -240,6 +267,7 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
         ...prevData,
         uhid: `${fetchTicket?.consumer?.[0]?.uid}`,
         firstName: `${fetchTicket?.consumer?.[0]?.firstName ?? ''}`,
+        phone: `${fetchTicket?.consumer?.[0]?.phone}`,
         lastName: `${fetchTicket?.consumer?.[0]?.lastName ?? ''}`,
         remarks: `${
           fetchTicket?.prescription[0]?.remarks === ' ' ||
@@ -317,7 +345,17 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
       setShowAlert(true);
     }
   };
-
+  const handleCopyClick = () => {
+    navigator.clipboard
+      .writeText(PatientData.phone)
+      .then(() => {
+        // alert('Phone number copied to clipboard!');
+        toast.success('Phone number copied to clipboard!');
+      })
+      .catch((err) => {
+        toast.error('Failed to copy phone number: ', err);
+      });
+  };
   const fetchUploadPdfUrl = async () => {
     if (viewEstimates[viewEstimates.length - 1]?.total) {
       window.open(viewEstimates[viewEstimates.length - 1].location, '_blank');
@@ -407,7 +445,9 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
               <Box>
                 <Box className="Patient-detail-Head">
                   <Stack className="Patient-detail-title">UHID</Stack>
+
                   {/* <Stack component='div' className='Patient-detail-data'>#{PatientData.uhid}</Stack> */}
+
                   <Stack component="div" className="Patient-detail-data">
                     <TextField
                       id="uhid"
@@ -442,6 +482,12 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
                   <Stack className="Patient-detail-title">Remark</Stack>
                   <Stack component="div" className="Patient-detail-data">
                     {PatientData.remarks}
+                  </Stack>
+                </Box>
+                <Box className="Patient-detail-Head">
+                  <Stack className="Patient-detail-title">Phone No.</Stack>
+                  <Stack component="div" className="Patient-detail-data">
+                    {currentTicket?.consumer[0].phone}
                   </Stack>
                 </Box>
                 {/* < Box className='Patient-detail-Head'>
@@ -721,23 +767,37 @@ const PatientDetail: React.FC<MyComponentProps> = ({ isPatient }) => {
                       {field.label}
                     </Stack>
                     <Stack component="div" className="Patient-detail-data">
-                      {field.label === 'Department'
-                        ? departmentSetter(field.value)
-                        : field.label === 'Doctor'
-                        ? doctorSetter(field.value)
-                        : field.label === 'Followup Date'
-                        ? `${
-                            field.value === `null`
-                              ? 'Not Mentioned'
-                              : `${String(
-                                  new Date(field.value).getDate()
-                                ).padStart(2, '0')}-${String(
-                                  new Date(field.value).getMonth() + 1
-                                ).padStart(2, '0')}-${new Date(
-                                  field.value
-                                ).getFullYear()}`
-                          }`
-                        : field.value}
+                      {field.label === 'Department' ? (
+                        departmentSetter(field.value)
+                      ) : field.label === 'Doctor' ? (
+                        doctorSetter(field.value)
+                      ) : field.label === 'Followup Date' ? (
+                        `${
+                          field.value === `null`
+                            ? 'Not Mentioned'
+                            : `${String(
+                                new Date(field.value).getDate()
+                              ).padStart(2, '0')}-${String(
+                                new Date(field.value).getMonth() + 1
+                              ).padStart(2, '0')}-${new Date(
+                                field.value
+                              ).getFullYear()}`
+                        }`
+                      ) : field.label === 'Phone No.' ? (
+                        <Box display={'flex'} justifyContent={'space-around'}>
+                          <Stack>{field.value}</Stack>
+                          <Stack
+                            component="div"
+                            className="edit-icon"
+                            sx={{ cursor: 'pointer', marginLeft: '0.5rem' }}
+                            onClick={handleCopyClick}
+                          >
+                            <CopyToClipboardIcon />
+                          </Stack>
+                        </Box>
+                      ) : (
+                        field.value
+                      )}
                     </Stack>
                   </Box>
                 ) : (
