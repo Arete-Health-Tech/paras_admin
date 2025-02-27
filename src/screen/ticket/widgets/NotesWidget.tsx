@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  createNoteActivityHandler,
   createNotesHandler,
   getAllNotesHandler,
   getTicketHandler
@@ -79,7 +80,14 @@ const NotesWidget = (props: Props) => {
         text: note,
         ticket: ticketID!
       };
-      await createNotesHandler(data);
+      const notesForActivity = {
+        ticket: ticketID!,
+        notes: note
+      };
+      await createNotesHandler(data , " ");
+      setNote('');
+      setNotesModal(false);
+      await createNoteActivityHandler(notesForActivity);
       setTimeout(() => {
         (async () => {
           const result = await getTicketHandler(
@@ -92,8 +100,7 @@ const NotesWidget = (props: Props) => {
         })();
       }, 1000);
 
-      setNote('');
-      setNotesModal(false);
+   
     }
   };
   const handleNoteEdited = async () => {
@@ -118,8 +125,7 @@ const NotesWidget = (props: Props) => {
         })();
       }, 1000);
 
-      setNote('');
-      setNotesModal(false);
+     
     }
   };
   const handleNoteDelete = async () => {

@@ -8,10 +8,12 @@ import {
   DialogContentText,
   DialogTitle,
   Drawer,
+  FormControl,
   FormControlLabel,
   IconButton,
   MenuItem,
   Modal,
+  outlinedInputClasses,
   Radio,
   RadioGroup,
   Select,
@@ -21,11 +23,12 @@ import {
 } from '@mui/material';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
+  // createNoteActivityHandler,
   createNotesHandler,
   createTimerHandler,
   getTicketHandler
 } from '../../../api/ticket/ticketHandler';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { iNote, iTicket, iTimer } from '../../../types/store/ticket';
 import { Call } from '@mui/icons-material';
 import CallButtonIcon from '../../../assets/Call button variations.svg';
@@ -44,6 +47,33 @@ import {
   createSecondOpinion
 } from '../../../api/ticket/ticket';
 import { toast } from 'react-toastify';
+import {
+  createTheme,
+  ThemeProvider,
+  Theme,
+  useTheme
+} from '@mui/material/styles';
+
+const theme = createTheme({
+  components: {
+    MuiFormLabel: {
+      styleOverrides: {
+        asterisk: {
+          color: 'red'
+        }
+      }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#0566FF'
+          }
+        }
+      }
+    }
+  }
+});
 
 const CustomModal = () => {
   const label = { inputProps: { 'aria-label': 'Size switch demo' } };
@@ -58,12 +88,16 @@ const CustomModal = () => {
     pageNumber,
     searchByName,
     setIsModalOpenCall,
-    setAgentLogin
+    setAgentLogin,
+    setDownloadDisable,
+    clearToChangeTicket,
+    setClearToChangeTicket
   } = useTicketStore();
   const [timer, setTimer] = useState(0);
+  const navigate = useNavigate();
 
   const timerRef = useRef<NodeJS.Timer | null>(null);
-  const [stoppedTimer, setStoppedTimer] = useState<number | null>(null);
+  const [stoppedTimer, setStoppedTimer] = useState<number | null>(0);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [chipOpen, setChipOpen] = useState(false);
@@ -76,8 +110,9 @@ const CustomModal = () => {
     doctor: '',
     additionalInfo: ''
   });
+
   const [challengeSelected, setChallengeSelected] = useState<string[]>([]);
-  const [ucid, setUCID] = useState('');
+  // const [ucid, setUCID] = useState('');
   const [formData, setFormData] = useState<iTimer>({
     select: '',
     stoppedTimer: 0
@@ -94,47 +129,57 @@ const CustomModal = () => {
 
   useEffect(() => {
     const fetchTicket = tickets.find((element) => ticketID === element._id);
-    setCurrentTicket(fetchTicket);
-  }, [ticketID]);
-  useEffect(() => {
-    if (
-      currentTicket?.opinion !== undefined &&
-      currentTicket?.opinion?.length > 0
-    ) {
-      setSecondOpinion((prevState) => ({
-        ...prevState,
-        type: currentTicket?.opinion[0]?.type,
-        hospital: currentTicket?.opinion[0]?.hospital,
-        doctor: currentTicket?.opinion[0]?.doctor,
-        additionalInfo: currentTicket?.opinion[0]?.additionalInfo
-      }));
-      setChallengeSelected(currentTicket?.opinion[0]?.challengeSelected);
-      setIsVisible(true);
+    if (fetchTicket) {
+      setCurrentTicket(fetchTicket);
     }
-  }, [currentTicket]);
+  }, [ticketID, tickets]);
 
-  const startTimer = async () => {
-    const returnedData = await callAgent(currentTicket?.consumer[0]?.phone);
-    // const returnedData = await callAgent(currentTicket?.consumer[0]?.phone)
-    if (returnedData.status == 'Agent is not available') {
-      toast.error('Agent is not loggedIn');
-      setAgentLogin(true);
-    } else if (returnedData.status == 'queued successfully') {
-      if (timerRef.current !== null) {
-        clearInterval(timerRef.current);
-      }
-      timerRef.current = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1);
-      }, 1000);
-      setUCID(returnedData.ucid);
-      setChipOpen(true);
-      setDialogOpen(true);
-    } else {
-      toast.error(returnedData.status);
-      setAgentLogin(true);
+  useEffect(() => {
+    if (currentTicket) {
+      setIsVisible(true);
+      setSecondOpinion((prev) => ({
+        type: currentTicket.opinion[0]?.type || '',
+        hospital: currentTicket.opinion[0]?.hospital || '',
+        doctor: currentTicket.opinion[0]?.doctor || '',
+        additionalInfo: currentTicket.opinion[0]?.additionalInfo || ''
+      }));
+      setChallengeSelected(currentTicket.opinion[0]?.challengeSelected || null);
+      // setIsVisible(true);
     }
-    // setChipOpen(true);
-    // setDialogOpen(true);
+  }, [tickets, currentTicket, ticketID]);
+  // console.log({currentTicket})
+  const startTimer = async () => {
+    // const returnedData = await callAgent(currentTicket?.consumer[0]?.phone);
+    // // const returnedData = await callAgent(currentTicket?.consumer[0]?.phone)
+    // if (returnedData.status == 'Agent is not available') {
+    //   toast.error('Agent is not loggedIn');
+    //   setAgentLogin(true);
+    // } else if (
+    //   returnedData.status == 'queued successfully' ||
+    //   returnedData.status == 'Customer Number is in DND'
+    // ) {
+    //   if (timerRef.current !== null) {
+    //     clearInterval(timerRef.current);
+    //   }
+    //   timerRef.current = setInterval(() => {
+    //     setTimer((prevTimer) => prevTimer + 1);
+    //   }, 1000);
+    //   setUCID(returnedData.ucid);
+    //   setChipOpen(true);
+    //   setDialogOpen(true);
+    // } else {
+    //   toast.error(returnedData.status);
+    //   setAgentLogin(true);
+    // }
+    setChipOpen(true);
+    setDialogOpen(true);
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+    }
+    setShowForm(true);
+    timerRef.current = setInterval(() => {
+      setTimer((prevTimer) => prevTimer + 1);
+    }, 1000);
   };
 
   const stopTimer = () => {
@@ -151,11 +196,110 @@ const CustomModal = () => {
         select: '',
         stoppedTimer: stoppedTimer
       });
-      handleFormSubmit();
+      // handleFormSubmit();
     }
-  }, [showForm, stoppedTimer]);
+  }, [showForm]);
+
+  //   const handleFormSubmit = async () => {
+  //     setDownloadDisable(true);
+  //     console.log(stoppedTimer,"stoppedTimer")
+  //     try {
+  //       setFormData((prevData) => ({
+  //         ...prevData,
+  //         stoppedTimer: stoppedTimer
+  //       }));
+  //       const sachin: any = ticketID;
+
+  //       //This function is for handle the time
+  //       const result = await createTimerHandler(formData, sachin);
+
+  //       //This if condition is for checking the notes which is inside the calling drawer
+  //       if (note !== '<p><br></p>' && note !== '') {
+  //         const data: iNote = {
+  //           text: note,
+  //           ticket: sachin,
+  //           // ucid: ucid,
+  //           stoppedTimer: timer
+  //         };
+  //         const notesForActivity = {
+  //           ticket: ticketID!,
+  //           notes: note
+  //         };
+  //         await createNotesHandler(data, formData.select);
+  //         await createNoteActivityHandler(notesForActivity);
+  //         setNote('');
+  //       }
+  //       // This is for second opinion start
+  //       const opinion = {
+  //         ...secondOpinion,
+  //         challengeSelected,
+  //         ticketid: ticketID
+  //       };
+
+  //       await createSecondOpinion(opinion);
+  //       // This is for second opinion end
+  //       // This is for creating phone data recording properly start
+
+  //       const phoneData = {
+  //         totalTime: timer,
+  //         // ucid: ucid,
+  //         ticket: ticketID
+  //       };
+  //       // await createPhoneData(phoneData);
+  //       console.log("111111")
+  //       // This is for creating phone data recording properly end
+
+  //       //This if condition is for checking that what disposition we have selected
+  //       if (formData.select === 'Rescheduled Call') {
+  //         setIsModalOpenCall(true);
+  //       }
+  //       console.log("222222")
+  //       if (
+  //         ['Awaiting test results', 'Awaiting TPA approvals', 'Under MM'].some(
+  //           (status) => challengeSelected.includes(status)
+  //         )
+  //       ) {
+  //         setIsModalOpenCall(true);
+  //       }
+  // console.log("333333");
+
+  //       // on submit button click after 1 second the ticket data will call
+  //       (async () => {
+  //         await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
+  //       })();
+
+  //       // Check if result is truthy (not undefined or null)
+
+  //       if (result !== undefined && result !== null) {
+  //         setFormData({ select: '' });
+  //         setDialogOpen(false);
+
+  //         // Temporary
+  //         // handleCloseModal();
+  //         // ====
+
+  //         setShowForm(false);
+  //         setTimer(0);
+  //         setChipOpen(false);
+  //         setSecondOpinion({
+  //           type: '',
+  //           hospital: '',
+  //           doctor: '',
+  //           additionalInfo: ''
+  //         });
+  //         setIsVisible(false);
+  //         setChallengeSelected([]);
+  //       }
+
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //     setDownloadDisable(false);
+  //     setClearToChangeTicket(true);
+  //   };
 
   const handleFormSubmit = async () => {
+    setDownloadDisable(true);
     try {
       setFormData((prevData) => ({
         ...prevData,
@@ -171,10 +315,10 @@ const CustomModal = () => {
         const data: iNote = {
           text: note,
           ticket: sachin,
-          ucid: ucid,
           stoppedTimer: stoppedTimer
+          // ucid: ucid
         };
-        await createNotesHandler(data);
+        await createNotesHandler(data, formData.select);
         setNote('');
       }
       // This is for second opinion start
@@ -185,32 +329,20 @@ const CustomModal = () => {
       };
 
       await createSecondOpinion(opinion);
-      // This is for second opinion end
-      // This is for creating phone data recording properly start
-      const phoneData = {
-        totalTime: timer,
-        ucid: ucid,
-        ticket: ticketID
-      };
-      await createPhoneData(phoneData);
-      // This is for creating phone data recording properly end
-
-      //This if condition is for checking that what disposition we have selected
-      if (formData.select === 'Rescheduled Call') {
-        setIsModalOpenCall(true);
-      }
-      if (
-        ['Awaiting test results', 'Awaiting TPA approvals', 'Under MM'].some(
-          (status) => challengeSelected.includes(status)
-        )
-      ) {
-        setIsModalOpenCall(true);
-      }
 
       // on submit button click after 1 second the ticket data will call
-      (async () => {
-        await getTicketHandler(searchByName, pageNumber, 'false', newFilter);
-      })();
+
+      await getTicketHandler(searchByName, pageNumber, 'false', filterTickets);
+
+      // This is for second opinion end
+      // This is for creating phone data recording properly start
+      // const phoneData = {
+      //   totalTime: timer,
+      //   // ucid: ucid,
+      //   ticket: ticketID
+      // }
+      // await createPhoneData(phoneData)
+      // This is for creating phone data recording properly end
 
       // Check if result is truthy (not undefined or null)
       if (result !== undefined && result !== null) {
@@ -218,29 +350,39 @@ const CustomModal = () => {
         setDialogOpen(false);
         setShowForm(false);
         setTimer(0);
+        setStoppedTimer(null);
         setChipOpen(false);
-        setSecondOpinion({
-          type: '',
-          hospital: '',
-          doctor: '',
-          additionalInfo: ''
-        });
-        setIsVisible(false);
+        // setSecondOpinion({
+        //   type: '',
+        //   hospital: '',
+        //   doctor: '',
+        //   additionalInfo: ''
+        // })
         setChallengeSelected([]);
+        setClearToChangeTicket(true);
       }
+
+      //This if condition is for checking that what disposition we have selected
+      if (formData.select === 'Rescheduled Call') {
+        setIsModalOpenCall(true);
+      }
+      // if (formData.select === "DND" || formData.select === "DNP") {
+      //   navigate(NAVIGATE_TO_TICKET);
+      // }
+      setDownloadDisable(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    if (showForm && stoppedTimer !== null) {
-      setFormData({
-        select: '',
-        stoppedTimer: stoppedTimer
-      });
-    }
-  }, [showForm, stoppedTimer]);
+  // useEffect(() => {
+  //   if (showForm && stoppedTimer !== null) {
+  //     setFormData({
+  //       select: '',
+  //       stoppedTimer: stoppedTimer
+  //     });
+  //   }
+  // }, [showForm]);
 
   const handleButtonClick = (buttonName) => {
     setFormData((prevData) => ({
@@ -253,7 +395,7 @@ const CustomModal = () => {
   const handleClose = () => {
     // setChipOpen(false);
     setShowForm(false);
-
+    setClearToChangeTicket(true);
     if (timerRef.current !== null) {
       clearInterval(timerRef.current);
     }
@@ -275,11 +417,21 @@ const CustomModal = () => {
     'Under MM',
     'Not happy with Doctor',
     'Financial constraints',
-    'No decision yet',
+    // 'Estimate Pending',
+    'Reschedule Call',
     'Date set for surgery',
-    'Date not given for Surgery',
-    'Reschdule Call',
-    'Query with Doctor'
+    // 'CM Fund',
+    // 'Ayushman release',
+    // 'Upgrade Offered',
+    // 'DNP - Last Call',
+    // 'CGHS',
+    // 'Discount Offered',
+    'No decision yet',
+    // 'Number not available',
+    // 'Under Chemo',
+    'Date not given for surgery',
+    'Query with doctor'
+
   ];
   const handleChallenge = (challenges) => {
     if (challengeSelected?.includes(challenges)) {
@@ -288,11 +440,24 @@ const CustomModal = () => {
       );
       setChallengeSelected(filteredData);
     } else {
-      setChallengeSelected((prevChallenges) =>
-        prevChallenges ? [...prevChallenges, challenges] : [challenges]
-      );
+      setChallengeSelected((prevChallenges) => [challenges]);
     }
   };
+
+  // temporary code
+
+  // const [openModal, setOpenModal] = useState(false);
+  // const handleOpenModal = () => {
+  //   startTimer();
+  //   setOpenModal(true);
+  // };
+  // const handleCloseModal = () => {
+  //   stopTimer();
+  //   setOpenModal(false);
+  // };
+  // useEffect(() => {
+  //   setClearToChangeTicket(note !== '' ? false : true);
+  // }, [note]);
 
   return (
     <div>
@@ -311,6 +476,8 @@ const CustomModal = () => {
             className="maximize-icon"
             onClick={() => {
               setShowForm(true);
+              // temporary
+              // handleOpenModal();
             }}
           >
             <img src={MaximizeIcon} alt="" />
@@ -321,6 +488,8 @@ const CustomModal = () => {
           className="Callbutton"
           onClick={() => {
             startTimer();
+            // temporary
+            // handleOpenModal();
           }}
         >
           <img src={CallButtonIcon} alt="" />
@@ -387,6 +556,17 @@ const CustomModal = () => {
           >
             Call Completed
           </Button>
+          <Button
+            variant={
+              isButtonClicked('DND - No. Blocked') ? 'contained' : 'outlined'
+            }
+            color="primary"
+            onClick={() => handleButtonClick('DND - No. Blocked')}
+            sx={{ minWidth: '140px' }}
+          >
+           DND - No. Blocked
+          </Button>
+          
         </DialogContent>
         <DialogActions>
           <Button
@@ -419,7 +599,7 @@ const CustomModal = () => {
         }}
         anchor="right"
         open={showForm} //showForm
-        onClose={handleClose}
+        // open={openModal} //showForm
         aria-labelledby="modal-modal-title"
       >
         <Box className="Calling-modal-container">
@@ -471,17 +651,19 @@ const CustomModal = () => {
                     Disposition
                   </Stack>
                   <Stack className="calling-btn">
-                    <button
-                      className="call-Button"
-                      style={{
-                        backgroundColor: isButtonClicked('DNP')
-                          ? '#DAE8FF'
-                          : '#F6F7F9'
-                      }}
-                      onClick={() => handleButtonClick('DNP')}
-                    >
-                      DNP
-                    </button>
+                    {localStorage.getItem('ticketType') !== 'Follow-Up' && (
+                      <button
+                        className="call-Button"
+                        style={{
+                          backgroundColor: isButtonClicked('DNP')
+                            ? '#DAE8FF'
+                            : '#F6F7F9'
+                        }}
+                        onClick={() => handleButtonClick('DNP')}
+                      >
+                        DNP
+                      </button>
+                    )}
                     <button
                       className="call-Button"
                       style={{
@@ -493,17 +675,19 @@ const CustomModal = () => {
                     >
                       DND
                     </button>
-                    <button
-                      className="call-Button"
-                      style={{
-                        backgroundColor: isButtonClicked('Rescheduled Call')
-                          ? '#DAE8FF'
-                          : '#F6F7F9'
-                      }}
-                      onClick={() => handleButtonClick('Rescheduled Call')}
-                    >
-                      Reschedule Call
-                    </button>
+                    {localStorage.getItem('ticketType') !== 'Follow-Up' && (
+                      <button
+                        className="call-Button"
+                        style={{
+                          backgroundColor: isButtonClicked('Rescheduled Call')
+                            ? '#DAE8FF'
+                            : '#F6F7F9'
+                        }}
+                        onClick={() => handleButtonClick('Rescheduled Call')}
+                      >
+                        Reschedule Call
+                      </button>
+                    )}
 
                     <button
                       style={{
@@ -519,16 +703,28 @@ const CustomModal = () => {
                     </button>
                     <button
                       style={{
-                        backgroundColor: isButtonClicked('Wrong Number')
+                        backgroundColor: isButtonClicked('DND - No. Blocked')
                           ? '#DAE8FF'
                           : '#F6F7F9'
                       }}
-                      onClick={() => handleButtonClick('Wrong Number')}
+                      onClick={() => handleButtonClick('DND - No. Blocked')}
                       className="call-Button"
                     >
                       {' '}
-                      Wrong Number
+                      DND - No. Blocked
                     </button>
+                    {/* <button
+                      style={{
+                        backgroundColor: isButtonClicked('Call Not Connected')
+                          ? '#DAE8FF'
+                          : '#F6F7F9'
+                      }}
+                      onClick={() => handleButtonClick('Call Not Connected')}
+                      className="call-Button"
+                    >
+                      {' '}
+                      Call Not Connected
+                    </button> */}
                   </Stack>
                 </Stack>
               </Stack>
@@ -560,6 +756,15 @@ const CustomModal = () => {
                         size="small"
                         checked={isVisible}
                         onChange={() => setIsVisible(!isVisible)}
+                        sx={{
+                          '& .MuiSwitch-switchBase.Mui-checked': {
+                            color: '#0566FF' // Active color for the thumb
+                          },
+                          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
+                            {
+                              backgroundColor: '#0566FF' // Active color for the track
+                            }
+                        }}
                       />
                     </Stack>
                   </Box>
@@ -575,9 +780,21 @@ const CustomModal = () => {
                                   secondOpinion.type ===
                                   'Considering Consultation'
                                 }
+                                sx={{
+                                  // color: '#0566FF', // Default color for the radio
+                                  '&.Mui-checked': {
+                                    color: '#0566FF' // Active color when checked
+                                  }
+                                }}
                               />
                             }
                             label="Considering Consultation"
+                            sx={{
+                              '& .MuiFormControlLabel-label': {
+                                fontFamily: '"Outfit", sans-serif', // Target the label inside FormControlLabel
+                                color: '#333' // Optional: Add text color
+                              }
+                            }}
                             onClick={() =>
                               setSecondOpinion((prevState) => ({
                                 ...prevState,
@@ -590,9 +807,21 @@ const CustomModal = () => {
                             control={
                               <Radio
                                 checked={secondOpinion.type === 'consulted'}
+                                sx={{
+                                  // color: '#0566FF', // Default color for the radio
+                                  '&.Mui-checked': {
+                                    color: '#0566FF' // Active color when checked
+                                  }
+                                }}
                               />
                             }
                             label="Consulted"
+                            sx={{
+                              '& .MuiFormControlLabel-label': {
+                                fontFamily: '"Outfit", sans-serif', // Target the label inside FormControlLabel
+                                color: '#333' // Optional: Add text color
+                              }
+                            }}
                             onClick={() =>
                               setSecondOpinion((prevState) => ({
                                 ...prevState,
@@ -601,19 +830,31 @@ const CustomModal = () => {
                             }
                           />
                           <FormControlLabel
-                            value="we are second opinon"
+                            value="we are second opinion"
                             control={
                               <Radio
                                 checked={
-                                  secondOpinion.type === 'we are second opinon'
+                                  secondOpinion.type === 'we are second opinion'
                                 }
+                                sx={{
+                                  // color: '#0566FF', // Default color for the radio
+                                  '&.Mui-checked': {
+                                    color: '#0566FF' // Active color when checked
+                                  }
+                                }}
                               />
                             }
-                            label="we are second opinon"
+                            label="we are second opinion"
+                            sx={{
+                              '& .MuiFormControlLabel-label': {
+                                fontFamily: '"Outfit", sans-serif', // Target the label inside FormControlLabel
+                                color: '#333' // Optional: Add text color
+                              }
+                            }}
                             onClick={() =>
                               setSecondOpinion((prevState) => ({
                                 ...prevState,
-                                type: 'we are second opinon'
+                                type: 'we are second opinion'
                               }))
                             }
                           />
@@ -624,7 +865,7 @@ const CustomModal = () => {
                             required
                             label="Hospital"
                             fullWidth
-                            InputLabelProps={{ shrink: true }}
+                            // InputLabelProps={{ shrink: true }}
                             size="small"
                             value={secondOpinion.hospital}
                             onChange={(e) =>
@@ -633,12 +874,37 @@ const CustomModal = () => {
                                 hospital: e.target.value
                               }))
                             }
+                            // InputLabelProps={{
+                            //   style: {
+                            //     fontSize: '13px',
+                            //     color: 'grey',
+
+                            //     fontFamily: `"Outfit",sans-serif`
+                            //   }
+                            // }}
+                            // InputProps={{
+                            //   style: {
+                            //     fontSize: '12px',
+                            //     padding: '2px 0',
+
+                            //     color: 'var(--Text-Black, #080F1A)',
+                            //     fontFamily: `"Outfit",sans-serif`
+                            //   }
+                            // }}
+                            // sx={{
+                            //   color: '#0566FF',
+                            //   '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+                            //     {
+                            //       borderColor: '#0566FF'
+                            //     }
+                            // }}
                           />
+
                           <TextField
                             required
                             label="Doctor Name"
                             fullWidth
-                            InputLabelProps={{ shrink: true }}
+                            // InputLabelProps={{ shrink: true }}
                             size="small"
                             value={secondOpinion.doctor}
                             onChange={(e) =>
@@ -647,16 +913,39 @@ const CustomModal = () => {
                                 doctor: e.target.value
                               }))
                             }
+                            // InputLabelProps={{
+                            //   style: {
+                            //     fontSize: '13px',
+                            //     color: 'grey',
+
+                            //     fontFamily: `"Outfit",sans-serif`
+                            //   }
+                            // }}
+                            // InputProps={{
+                            //   style: {
+                            //     padding: '2px 0',
+                            //     fontSize: '12px',
+                            //     color: 'var(--Text-Black, #080F1A)',
+                            //     fontFamily: `"Outfit",sans-serif`
+                            //   }
+                            // }}
+                            // sx={{
+                            //   color: '#0566FF',
+                            //   '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+                            //     {
+                            //       borderColor: '#0566FF'
+                            //     }
+                            // }}
                           />
                         </Box>
 
                         <Box sx={{ marginTop: 2 }}>
                           <TextField
                             multiline
-                            rows={4}
+                            rows={6}
                             label="Additional Information"
                             fullWidth
-                            InputLabelProps={{ shrink: true }}
+                            // InputLabelProps={{ shrink: true }}
                             size="small"
                             value={secondOpinion.additionalInfo}
                             onChange={(e) =>
@@ -665,6 +954,29 @@ const CustomModal = () => {
                                 additionalInfo: e.target.value
                               }))
                             }
+                            // InputLabelProps={{
+                            //   style: {
+                            //     fontSize: '13px',
+                            //     color: 'grey',
+
+                            //     fontFamily: `"Outfit",sans-serif`
+                            //   }
+                            // }}
+                            // InputProps={{
+                            //   style: {
+                            //     padding: '2px 0',
+                            //     fontSize: '12px',
+                            //     color: 'var(--Text-Black, #080F1A)',
+                            //     fontFamily: `"Outfit",sans-serif`
+                            //   }
+                            // }}
+                            // sx={{
+                            //   color: '#0566FF',
+                            //   '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+                            //     {
+                            //       borderColor: '#0566FF'
+                            //     }
+                            // }}
                           />
                         </Box>
                       </Box>
@@ -762,9 +1074,11 @@ const CustomModal = () => {
                     <ReactQuill
                       theme="snow"
                       value={note}
-                      onChange={(content) => setNote(content)}
+                      onChange={(content) => {
+                        setNote(content);
+                      }}
                       // className='noteBox'
-                      style={{ height: '25vh', width: '100%' }}
+                      style={{ height: '20vh', width: '100%' }}
                     />
                   </Stack>
                 </Stack>
@@ -778,7 +1092,15 @@ const CustomModal = () => {
                 justifyContent="space-between"
                 gap={'10px'}
               >
-                <button className="reminder-cancel-btn" onClick={handleClose}>
+                <button
+                  className="reminder-cancel-btn"
+                  onClick={() => {
+                    // setShowForm(false);
+                    handleClose();
+                    // temporary
+                    // handleCloseModal();
+                  }}
+                >
                   Cancel
                 </button>
                 <button

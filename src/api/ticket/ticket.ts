@@ -181,8 +181,11 @@ export const getAllNotesByTicketId = async (ticketId: string) => {
   return data;
 };
 
-export const createNewNote = async (note: iNote) => {
-  const { data } = await apiClient.post('/ticket/note', note);
+export const createNewNote = async (note: iNote, disposition: string) => {
+  const { data } = await apiClient.post('/ticket/note', {
+    ...note,
+    'disposition': disposition
+  });
   return data;
 };
 
@@ -433,4 +436,7 @@ export const markAsReadAuditComment = async (ticketID: string | undefined) => {
 export const getAuditorCommentCount = async () => {
   const { data } = await apiClient.get(`/ticket/auditorCommentCount`);
   return data;
+};
+export const createNoteActivity = async (notesData) => {
+  await apiClient.post( '/activity/getNotes', notesData );
 };
