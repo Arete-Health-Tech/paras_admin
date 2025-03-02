@@ -60,7 +60,7 @@ const FileUpload = () => {
               setOpen(false);
               setSelectedFile('');
               setUploading(false);
-              navigate('/ticket');
+              navigate('/admission');
               return; // Exit the function after success
             }
           } else {

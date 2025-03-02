@@ -464,6 +464,64 @@ const TicketFilter = (props: {
       setDownloadDisable(false);
     }
   };
+  const handleApplyFilterOnClear = async () => {
+    try {
+      setDownloadDisable(true);
+
+      setIsFilterOpen(false);
+      setPageNumber(1);
+      setFilterTickets(selectedFilters);
+
+      await getTicketHandler(UNDEFINED, 1, 'false', {
+        stageList: [],
+        representative: null,
+        results: null,
+        admissionType: [],
+        diagnosticsType: [],
+        dateRange: [],
+        status: [],
+        followUp: null
+      });
+
+      setFilterCount(
+        ticketFilterCount(
+          selectedFilters,
+          admissionType,
+          diagnosticsType,
+          dateRange,
+          statusType,
+          filteredLocation,
+          isPatnaUser,
+          isRanchiUser,
+          followUp
+        )
+      );
+
+      props.setPage(1);
+
+      if (ticketID) {
+        await validateTicket(ticketID);
+        const ticketType = localStorage.getItem('ticketType');
+        const basePath =
+          ticketType === 'Admission'
+            ? '/admission/'
+            : ticketType === 'Diagnostics'
+            ? '/diagnostics/'
+            : ticketType === 'Follow-Up'
+            ? '/follow-up/'
+            : '/ticket/';
+
+        navigate(basePath);
+      }
+
+      console.log('Filter data:', selectedFilters);
+    } catch (error) {
+      console.error('Error in handleApplyFilter:', error);
+      setDownloadDisable(false);
+    } finally {
+      setDownloadDisable(false);
+    }
+  };
 
   const handleClearFilter = async () => {
     dispatchFilter({ type: filterActions.STAGES, payload: [] });
@@ -506,11 +564,14 @@ const TicketFilter = (props: {
     } else {
       setFilteredLocation('');
     }
+    if (filterCount === 0) {
+      handleApplyFilterOnClear();
+    }
   };
 
   useEffect(() => {
     handleClearFilter();
-    handleApplyFilter();
+    handleApplyFilterOnClear();
   }, [localStorage.getItem('ticketType')]);
 
   const handleToggleChange = (event, newValue: any) => {
@@ -924,7 +985,7 @@ const TicketFilter = (props: {
               </ToggleButtonGroup>
             </Box>
           )}
-          {user?.role === 'ADMIN' && isAdminUser && (
+          {/* {user?.role === 'ADMIN' && isAdminUser && (
             <Box p={1} px={3}>
               <Stack sx={{ fontFamily: 'Outfit,san-serif', fontWeight: '500' }}>
                 Location
@@ -956,7 +1017,7 @@ const TicketFilter = (props: {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>
-          )}
+          )} */}
 
           <Box p={1} px={3}>
             <Stack sx={{ fontFamily: 'Outfit,san-serif', fontWeight: '500' }}>

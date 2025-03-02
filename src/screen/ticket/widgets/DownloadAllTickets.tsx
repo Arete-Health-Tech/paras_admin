@@ -155,6 +155,7 @@ const DownloadAllTickets = (props: Props) => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<string>('');
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -398,10 +399,12 @@ const DownloadAllTickets = (props: Props) => {
       );
     } finally {
       setDownloadDisable(false);
+      setSelectedDate(null);
+      setSelectedUnit('');
+      setAnchorEl(null);
     }
     setDownloadDisable(false);
   };
-  const [selectedUnit, setSelectedUnit] = useState<string>('');
 
   const handleUnitChange = (event: SelectChangeEvent<string>) => {
     setSelectedUnit(event.target.value);
