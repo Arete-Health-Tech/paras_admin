@@ -261,7 +261,7 @@ const DownloadAllTickets = (props: Props) => {
             ? ticket.prescription[0].service.name
             : 'No Advised',
           isPharmacy: ticket?.prescription[0]?.isPharmacy
-            ? 'Advised'
+            ? ticket?.prescription[0]?.isPharmacy
             : 'No Advised',
           assigned:
             handleAssigne(ticket?.assigned[0]?._id).join(' ') ||
