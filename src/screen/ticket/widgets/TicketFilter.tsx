@@ -465,6 +465,7 @@ const TicketFilter = (props: {
     }
   };
   const handleApplyFilterOnClear = async () => {
+    console.log({ selectedFilters });
     try {
       setDownloadDisable(true);
 

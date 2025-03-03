@@ -215,19 +215,6 @@ const Ticket = () => {
 
   const navigate = useNavigate();
   const currentRoute = useMatch(NAVIGATE_TO_TICKET);
-  const redirectTicket = () => {
-    navigate(
-      `${
-        localStorage.getItem('ticketType') === 'Admission'
-          ? '/admission/'
-          : localStorage.getItem('ticketType') === 'Diagnostics'
-          ? '/diagnostics/'
-          : localStorage.getItem('ticketType') === 'Follow-Up'
-          ? '/follow-up/'
-          : '/ticket/'
-      }`
-    );
-  };
 
   const newFilter =
     localStorage.getItem('ticketType') === 'Admission'
@@ -236,8 +223,15 @@ const Ticket = () => {
       ? filterTicketsDiago
       : localStorage.getItem('ticketType') === 'Follow-Up'
       ? filterTicketsFollowUp
-      : filterTickets;
-
+      : {
+          stageList: [],
+          representative: null,
+          results: null,
+          dateRange: [],
+          status: [],
+          followUp: null
+        };
+console.log(filterTickets);
   const handlePagination = async (
     event: React.ChangeEvent<unknown>,
     pageNo: number
@@ -415,6 +409,7 @@ const Ticket = () => {
     setSearchName('');
     setSearchByName(UNDEFINED);
     setSearchError('Type to search & Enter');
+    localStorage.setItem('location', '');
     // setTicketCount(ticketCache["count"]);
     // setTickets(ticketCache[1]);
     setPage(1);
