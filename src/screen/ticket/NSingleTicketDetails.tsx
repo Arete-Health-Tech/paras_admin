@@ -1291,7 +1291,7 @@ const NSingleTicketDetails = (props: Props) => {
               {/* end Lead Assignee */}
 
               <Stack className="Ticket-LeadAge">
-                {calculatedDate(currentTicket?.date)}
+                {currentTicket?.date}
               </Stack>
 
               {/* Kebab Menu */}

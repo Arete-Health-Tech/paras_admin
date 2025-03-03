@@ -398,10 +398,16 @@ const DownloadAllTickets = (props: Props) => {
         'Error generating CSV: Check Your Internet Connectivity if still facing issue while Downloading - Please Contact Octa Admin for Download Data)'
       );
     } finally {
-      setDownloadDisable(false);
-      setSelectedDate(null);
-      setSelectedUnit('');
-      setAnchorEl(null);
+      if (user?.Unit) {
+        setDownloadDisable(false);
+        setSelectedDate(null);
+        setAnchorEl(null);
+      } else {
+        setDownloadDisable(false);
+        setSelectedDate(null);
+        setSelectedUnit('');
+        setAnchorEl(null);
+      }
     }
     setDownloadDisable(false);
   };
@@ -410,6 +416,19 @@ const DownloadAllTickets = (props: Props) => {
     setSelectedUnit(event.target.value);
     setErrors((prev) => ({ ...prev, unit: false })); // Clear error on selection
   };
+
+  useEffect(() => {
+    if (user?.Unit) {
+      setSelectedUnit(
+        user.Unit === '66f7bdca783f9aaba1099ce4'
+          ? 'Ranchi'
+          : user.Unit === '66fa9666589c46100af402c9'
+          ? 'Patna'
+          : 'All'
+      );
+    }
+  }, []);
+
   return (
     <Box p={1} px={2}>
       {/* <LightTooltip
@@ -445,36 +464,35 @@ const DownloadAllTickets = (props: Props) => {
               borderRadius: '16px'
             }}
           >
-            {user?.role == 'ADMIN' && user?.Unit == null && (
-              <FormControl fullWidth size="small">
-                <InputLabel id="unit-select-label" sx={materilaFieldCss}>
-                  Select Unit
-                </InputLabel>
-                <Select
-                  labelId="unit-select-label"
-                  id="unit-select"
-                  value={selectedUnit}
-                  label="Select Unit"
-                  sx={materilaInputFieldCss}
-                  onChange={handleUnitChange}
-                >
-                  <MenuItem value="All" sx={materilaInputFieldCss}>
-                    All
-                  </MenuItem>
-                  <MenuItem value="Ranchi" sx={materilaInputFieldCss}>
-                    Ranchi
-                  </MenuItem>
-                  <MenuItem value="Patna" sx={materilaInputFieldCss}>
-                    Patna
-                  </MenuItem>
-                </Select>
-                {errors.unit && (
-                  <Stack sx={{ fontSize: '12px', color: 'red' }}>
-                    Please select a unit.
-                  </Stack>
-                )}
-              </FormControl>
-            )}
+            <FormControl fullWidth size="small">
+              <InputLabel id="unit-select-label" sx={materilaFieldCss}>
+                Select Unit
+              </InputLabel>
+              <Select
+                labelId="unit-select-label"
+                id="unit-select"
+                value={selectedUnit}
+                label="Select Unit"
+                sx={materilaInputFieldCss}
+                onChange={handleUnitChange}
+                disabled={user?.Unit ? true : false}
+              >
+                <MenuItem value="All" sx={materilaInputFieldCss}>
+                  All
+                </MenuItem>
+                <MenuItem value="Ranchi" sx={materilaInputFieldCss}>
+                  Ranchi
+                </MenuItem>
+                <MenuItem value="Patna" sx={materilaInputFieldCss}>
+                  Patna
+                </MenuItem>
+              </Select>
+              {errors.unit && (
+                <Stack sx={{ fontSize: '12px', color: 'red' }}>
+                  Please select a unit.
+                </Stack>
+              )}
+            </FormControl>
             <Stack>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker

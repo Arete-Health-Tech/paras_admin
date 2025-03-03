@@ -75,7 +75,7 @@ const LeadDetail: React.FC<MyComponentProps> = ({ isLeadDetail }) => {
         <Box className="additional-detail-Head">
           <Stack className="additional-detail-title">Created On:</Stack>
           <Stack component="div" className="additional-detail-data">
-            {calculatedDate(currentTicket?.date)}
+            {currentTicket?.date}
           </Stack>
         </Box>
       </Box>

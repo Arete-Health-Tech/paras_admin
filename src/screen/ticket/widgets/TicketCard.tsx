@@ -618,7 +618,7 @@ const TicketCard = (props: Props) => {
           className="Ticket-LeadAge"
           sx={{ fontSize: '12px !important', padding: '4px 0 0px 0' }}
         >
-          {calculatedDate(props.patientData?.date)}
+          {props.patientData?.date}
         </Stack>
         <Stack
           sx={{ display: 'flex', flexDirection: 'row !important', gap: '5px' }}

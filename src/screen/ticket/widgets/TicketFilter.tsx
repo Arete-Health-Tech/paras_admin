@@ -472,31 +472,9 @@ const TicketFilter = (props: {
       setPageNumber(1);
       setFilterTickets(selectedFilters);
 
-      await getTicketHandler(UNDEFINED, 1, 'false', {
-        stageList: [],
-        representative: null,
-        results: null,
-        admissionType: [],
-        diagnosticsType: [],
-        dateRange: [],
-        status: [],
-        followUp: null
-      });
+      await getTicketHandler(UNDEFINED, 1, 'false', selectedFilters);
 
-      setFilterCount(
-        ticketFilterCount(
-          selectedFilters,
-          admissionType,
-          diagnosticsType,
-          dateRange,
-          statusType,
-          filteredLocation,
-          isPatnaUser,
-          isRanchiUser,
-          followUp
-        )
-      );
-
+      setFilterCount(0);
       props.setPage(1);
 
       if (ticketID) {
@@ -563,9 +541,6 @@ const TicketFilter = (props: {
       setFilteredLocation('Ranchi');
     } else {
       setFilteredLocation('');
-    }
-    if (filterCount === 0) {
-      handleApplyFilterOnClear();
     }
   };
 
