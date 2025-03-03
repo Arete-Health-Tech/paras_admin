@@ -200,15 +200,15 @@ const TicketFilter = (props: {
 
         if (patnaFound) {
           SetIsPatnaUser(true);
-          setFilteredLocation('patna');
+          // setFilteredLocation('patna');
         } else if (ranchiFound) {
           SetIsRanchiUser(true);
-          setFilteredLocation('Ranchi');
+          // setFilteredLocation('Ranchi');
         } else {
           setIsAdminUser(true);
           SetIsPatnaUser(false);
           SetIsRanchiUser(false);
-          setFilteredLocation('');
+          // setFilteredLocation('');
         }
       } catch (error) {
         console.error('Error fetching representatives:', error);
@@ -536,13 +536,13 @@ const TicketFilter = (props: {
     setStatusType((prev) => []);
     setDiagnosticsType((prev) => []);
     setDateRange(['', '']);
-    if (isPatnaUser) {
-      setFilteredLocation('patna');
-    } else if (isRanchiUser) {
-      setFilteredLocation('Ranchi');
-    } else {
-      setFilteredLocation('');
-    }
+    // if (isPatnaUser) {
+    //   setFilteredLocation('patna');
+    // } else if (isRanchiUser) {
+    //   setFilteredLocation('Ranchi');
+    // } else {
+    //   setFilteredLocation('');
+    // }
   };
 
   useEffect(() => {
