@@ -547,7 +547,9 @@ const TicketFilter = (props: {
 
   useEffect(() => {
     handleClearFilter();
-    handleApplyFilterOnClear();
+    setTimeout(() => {
+      handleApplyFilterOnClear();
+    }, 1000);
   }, [localStorage.getItem('ticketType')]);
 
   const handleToggleChange = (event, newValue: any) => {
