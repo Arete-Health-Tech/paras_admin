@@ -34,7 +34,7 @@ type Props = {};
 const Authenticated = (props: Props) => {
   return (
     <>
-      <AgentLogin>
+      {/* <AgentLogin> */}
         <Navbar>
           <Routes>
             <Route path="/" element={<DashboardLayout />}>
@@ -85,7 +85,7 @@ const Authenticated = (props: Props) => {
             <Route path="configuration/*" element={<Configuration />} />
           </Routes>
         </Navbar>
-      </AgentLogin>
+      {/* </AgentLogin> */}
     </>
   );
 };
