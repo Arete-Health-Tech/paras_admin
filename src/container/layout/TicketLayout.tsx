@@ -231,7 +231,7 @@ const Ticket = () => {
           status: [],
           followUp: null
         };
-console.log(filterTickets);
+  console.log(filterTickets);
   const handlePagination = async (
     event: React.ChangeEvent<unknown>,
     pageNo: number
@@ -272,7 +272,7 @@ console.log(filterTickets);
   }, []);
 
   useEffect(() => {
-    console.log(newFilter, 'newFilter');
+    console.log('called location useEffect', newFilter);
     const data = async () => {
       setDownloadDisable(true);
       setSearchName('');
@@ -282,7 +282,7 @@ console.log(filterTickets);
       // setTickets(ticketCache[1]);
       setPage(1);
       setPageNumber(1);
-      await getTicketHandler(UNDEFINED, 1, 'false', newFilter);
+      await getTicketHandler(UNDEFINED, 1, 'false', initialFilters);
       setDownloadDisable(false);
     };
     data();
@@ -409,7 +409,7 @@ console.log(filterTickets);
     setSearchName('');
     setSearchByName(UNDEFINED);
     setSearchError('Type to search & Enter');
-    localStorage.setItem('location', '');
+    // localStorage.setItem('location', '');
     // setTicketCount(ticketCache["count"]);
     // setTickets(ticketCache[1]);
     setPage(1);
@@ -807,34 +807,24 @@ console.log(filterTickets);
   }, [showCallReschedulerModal]);
 
   const { setFilterTickets } = useTicketStore();
-  // const initialFilters = {
-  //   stageList: [],
-  //   representative: null,
-  //   results: null,
-  //   admissionType: [],
-  //   diagnosticsType: [],
-  //   dateRange: [],
-  //   status: [],
-  //   followUp: null,
+
+  // const backToDashboard = () => {
+  //   getTicketHandler(UNDEFINED, 1, 'false', initialFilters);
+  //   setFilterTickets(initialFilters);
+  //   navigate('/');
   // };
 
-  const backToDashboard = () => {
-    getTicketHandler(UNDEFINED, 1, 'false', initialFilters);
-    setFilterTickets(initialFilters);
-    navigate('/');
-  };
-
-  const totalEstimate = (ticketID: any) => {
-    if (viewEstimates.length !== 0) {
-      if (viewEstimates[viewEstimates.length - 1]?.ticket === ticketID) {
-        return viewEstimates[viewEstimates.length - 1]?.total;
-      } else {
-        return 0;
-      }
-    } else {
-      return 0;
-    }
-  };
+  // const totalEstimate = (ticketID: any) => {
+  //   if (viewEstimates.length !== 0) {
+  //     if (viewEstimates[viewEstimates.length - 1]?.ticket === ticketID) {
+  //       return viewEstimates[viewEstimates.length - 1]?.total;
+  //     } else {
+  //       return 0;
+  //     }
+  //   } else {
+  //     return 0;
+  //   }
+  // };
 
   const open = Boolean(anchorEl);
 
@@ -852,7 +842,7 @@ console.log(filterTickets);
   //This function call the api to get all the ticket id with their whtsapp message count
   const getAllWhtsappMsgCount = async () => {
     await getAllWhtsappCountHandler();
-    await getTicketHandler(searchName, pageNumber, 'false', newFilter);
+    // await getTicketHandler(searchName, pageNumber, 'false', newFilter);
   };
   useEffect(() => {
     getAllWhtsappMsgCount();
